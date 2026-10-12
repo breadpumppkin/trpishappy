@@ -32,23 +32,10 @@
             background-attachment: fixed;
         }
 
-        /* 🌈 炫酷色彩缤纷 + 缓慢闪动的动态大标题效果 */
         @keyframes colorFlowAndFlash {
-            0% {
-                background-position: 0% 50%;
-                opacity: 0.85;
-                filter: drop-shadow(0 0 10px rgba(255, 107, 107, 0.4));
-            }
-            50% {
-                background-position: 100% 50%;
-                opacity: 1;
-                filter: drop-shadow(0 0 20px rgba(102, 126, 234, 0.6));
-            }
-            100% {
-                background-position: 0% 50%;
-                opacity: 0.85;
-                filter: drop-shadow(0 0 10px rgba(255, 107, 107, 0.4));
-            }
+            0% { background-position: 0% 50%; opacity: 0.85; filter: drop-shadow(0 0 10px rgba(255, 107, 107, 0.4)); }
+            50% { background-position: 100% 50%; opacity: 1; filter: drop-shadow(0 0 20px rgba(102, 126, 234, 0.6)); }
+            100% { background-position: 0% 50%; opacity: 0.85; filter: drop-shadow(0 0 10px rgba(255, 107, 107, 0.4)); }
         }
 
         .neon-flash-title {
@@ -62,7 +49,6 @@
             letter-spacing: 1px;
         }
 
-        /* 密码保护遮罩层 */
         #auth-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -103,15 +89,8 @@
             outline: none;
             text-align: center;
             letter-spacing: 10px;
-            transition: all 0.3s;
             background: #f8fafc;
             color: #1a202c;
-        }
-
-        .auth-box input:focus {
-            border-color: #FF6B6B;
-            background: #ffffff;
-            box-shadow: 0 0 0 4px rgba(255, 107, 107, 0.15);
         }
 
         .auth-box button {
@@ -124,13 +103,7 @@
             font-size: 1.1rem;
             font-weight: bold;
             cursor: pointer;
-            transition: all 0.3s;
             box-shadow: 0 8px 20px rgba(255, 107, 107, 0.35);
-        }
-
-        .auth-box button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 12px 25px rgba(255, 107, 107, 0.5);
         }
 
         .error-tip {
@@ -141,7 +114,6 @@
             font-weight: 600;
         }
 
-        /* 主页面主体 */
         .container {
             width: 100%;
             max-width: 850px;
@@ -166,16 +138,9 @@
             margin-top: 10px;
         }
 
-        /* 视图切换 */
-        .view-section {
-            display: none;
-        }
-        .view-section.active {
-            display: block;
-            animation: fadeIn 0.4s ease;
-        }
+        .view-section { display: none; }
+        .view-section.active { display: block; animation: fadeIn 0.4s ease; }
 
-        /* 首页目的地卡片网格 */
         .trip-grid {
             display: grid;
             gap: 25px;
@@ -211,17 +176,8 @@
             border-color: rgba(255, 107, 107, 0.4);
         }
 
-        .trip-info h3 {
-            font-size: 1.6rem;
-            color: var(--text-main);
-            margin-bottom: 8px;
-            font-weight: 700;
-        }
-
-        .trip-info p {
-            color: var(--text-muted);
-            font-size: 1rem;
-        }
+        .trip-info h3 { font-size: 1.6rem; color: var(--text-main); margin-bottom: 8px; font-weight: 700; }
+        .trip-info p { color: var(--text-muted); font-size: 1rem; }
 
         .trip-badge {
             background: #fff5f5;
@@ -239,7 +195,6 @@
             box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
         }
 
-        /* 返回按钮 */
         .back-btn {
             background: rgba(255, 255, 255, 0.9);
             border: 1px solid #cbd5e0;
@@ -249,8 +204,6 @@
             font-weight: bold;
             cursor: pointer;
             margin-bottom: 25px;
-            transition: all 0.2s;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
             display: inline-flex;
             align-items: center;
             gap: 8px;
@@ -260,645 +213,3 @@
             background: #ffffff;
             color: #FF6B6B;
             border-color: #FF6B6B;
-            transform: translateX(-4px);
-        }
-
-        /* 四川行详情页专属大标题 */
-        .detail-header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .detail-header h2 {
-            font-size: 2.2rem;
-            color: var(--text-main);
-            font-weight: 800;
-            margin-bottom: 8px;
-        }
-
-        .detail-header p {
-            color: var(--text-muted);
-            font-size: 1rem;
-        }
-
-        /* 顶部吸顶快速导航 */
-        .quick-nav {
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            padding: 15px 22px;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.06);
-            margin-bottom: 35px;
-            display: flex;
-            gap: 12px;
-            overflow-x: auto;
-            position: sticky;
-            top: 20px;
-            z-index: 10;
-            border: 1px solid rgba(255, 255, 255, 0.9);
-        }
-
-        .quick-nav::-webkit-scrollbar {
-            display: none;
-        }
-
-        .quick-nav-label {
-            font-size: 0.95rem;
-            font-weight: 700;
-            color: var(--text-muted);
-            display: flex;
-            align-items: center;
-            white-space: nowrap;
-        }
-
-        .nav-chip {
-            background: #f1f5f9;
-            border: 1px solid #e2e8f0;
-            padding: 8px 18px;
-            border-radius: 30px;
-            font-size: 0.95rem;
-            color: var(--text-main);
-            cursor: pointer;
-            white-space: nowrap;
-            transition: all 0.25s;
-            text-decoration: none;
-            font-weight: 600;
-        }
-
-        .nav-chip:hover {
-            background: #fff5f5;
-            border-color: #FF6B6B;
-            color: #FF6B6B;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(255, 107, 107, 0.15);
-        }
-
-        /* 个人卡片样式 */
-        .person-card {
-            background: var(--card-bg);
-            backdrop-filter: blur(10px);
-            border-radius: 24px;
-            padding: 35px;
-            margin-bottom: 30px;
-            box-shadow: var(--shadow-card);
-            border-left: 8px solid #FF6B6B;
-            scroll-margin-top: 100px;
-            border: 1px solid rgba(255, 255, 255, 0.8);
-            transition: transform 0.3s, box-shadow 0.3s;
-        }
-
-        .person-card:hover {
-            box-shadow: 0 20px 45px rgba(0, 0, 0, 0.08);
-        }
-
-        .person-card h3 {
-            font-size: 1.4rem;
-            margin-bottom: 22px;
-            color: var(--text-main);
-            border-bottom: 2px solid #edf2f7;
-            padding-bottom: 14px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-weight: 700;
-        }
-
-        .section-block {
-            margin-bottom: 20px;
-        }
-
-        .section-block label {
-            font-size: 0.95rem;
-            font-weight: 700;
-            color: #4a5568;
-            display: block;
-            margin-bottom: 8px;
-        }
-
-        textarea {
-            width: 100%;
-            height: 75px;
-            padding: 14px;
-            border: 1.5px solid #cbd5e0;
-            border-radius: 14px;
-            resize: vertical;
-            font-size: 1rem;
-            outline: none;
-            background: #f8fafc;
-            color: #1a202c;
-            transition: all 0.25s;
-        }
-
-        textarea:focus {
-            border-color: #FF6B6B;
-            background: #ffffff;
-            box-shadow: 0 0 0 4px rgba(255, 107, 107, 0.12);
-        }
-
-        /* 照片上传区样式 */
-        .photo-upload-area {
-            margin-top: 10px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            flex-wrap: wrap;
-        }
-
-        .upload-btn {
-            background: #edf2f7;
-            color: #4a5568;
-            padding: 7px 16px;
-            border-radius: 10px;
-            font-size: 0.85rem;
-            cursor: pointer;
-            border: 1.5px dashed #a0aec0;
-            transition: all 0.2s;
-            font-weight: 600;
-        }
-
-        .upload-btn:hover {
-            background: #e2e8f0;
-            color: #1a202c;
-            border-color: #718096;
-            transform: translateY(-1px);
-        }
-
-        .hidden-file-input {
-            display: none;
-        }
-
-        .photo-preview-container {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .thumb-wrapper {
-            position: relative;
-            width: 65px;
-            height: 65px;
-        }
-
-        .thumb {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            border-radius: 12px;
-            border: 2px solid #ffffff;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            transition: transform 0.2s;
-        }
-
-        .thumb:hover {
-            transform: scale(1.05);
-        }
-
-        .delete-btn {
-            position: absolute;
-            top: -6px;
-            right: -6px;
-            background: #e53e3e;
-            color: white;
-            border: none;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            font-size: 12px;
-            font-weight: bold;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-            transition: transform 0.2s;
-        }
-
-        .delete-btn:hover {
-            transform: scale(1.2);
-            background: #c53030;
-        }
-
-        /* 互动表情栏样式 */
-        .reaction-bar {
-            display: flex;
-            gap: 12px;
-            margin-top: 25px;
-            padding-top: 18px;
-            border-top: 1.5px dashed #edf2f7;
-            flex-wrap: wrap;
-        }
-
-        .reaction-btn {
-            background: #f8fafc;
-            border: 1.5px solid #e2e8f0;
-            padding: 8px 18px;
-            border-radius: 30px;
-            font-size: 0.9rem;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            transition: all 0.25s;
-            font-weight: 600;
-            color: #475569;
-        }
-
-        .reaction-btn:hover {
-            background: #edf2f7;
-            border-color: #cbd5e0;
-            transform: translateY(-2px);
-        }
-
-        .reaction-btn.active {
-            background: #fff5f5;
-            border-color: #FF6B6B;
-            color: #FF6B6B;
-            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.25);
-            transform: scale(1.03);
-        }
-    </style>
-</head>
-<body>
-
-    <!-- 密码输入遮罩层 -->
-    <div id="auth-overlay">
-        <div class="auth-box">
-            <h2 class="neon-flash-title" style="font-size: 1.8rem;">下一站 遇见美好</h2>
-            <div class="sub-title" style="margin-top: 8px;">5人专属私密空间</div>
-            <p style="color: #718096; font-size: 0.9rem; margin-bottom: 25px;">请输入 4 位专属访问密码</p>
-            <input type="password" id="password-input" maxlength="4" placeholder="••••">
-            <button onclick="checkPassword()">开启回忆空间</button>
-            <div id="error-msg" class="error-tip">密码不正确，请重新输入</div>
-        </div>
-    </div>
-
-    <!-- 主体内容 -->
-    <div class="container" id="main-content">
-        <!-- 主页面大标题 -->
-        <header>
-            <h1 class="neon-flash-title">下一站 遇见美好 ✈️</h1>
-            <p>5人旅行回忆纪录墙 ── 记录走过的足迹，共赴明年的山海之约</p>
-        </header>
-
-        <!-- 视图 1：主页面（目的地列表） -->
-        <div id="view-home" class="view-section active">
-            <div class="trip-grid">
-                <div class="trip-card-item" onclick="switchView('view-sichuan')">
-                    <div class="trip-info">
-                        <h3>🏔️ 四川行</h3>
-                        <p>林姐、赵妹、树林、狗子、肥美的5人行足迹回忆录与感悟墙</p>
-                    </div>
-                    <span class="trip-badge">进入空间 →</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- 视图 2：四川行详情页 -->
-        <div id="view-sichuan" class="view-section">
-            <button class="back-btn" onclick="switchView('view-home')">← 返回主页面</button>
-
-            <!-- 独立主题：四川行 -->
-            <div class="detail-header">
-                <h2>🏔️ 四川行</h2>
-                <p>5人专属回忆与感悟墙</p>
-            </div>
-
-            <!-- 顶部快速导航/搜索跳转栏 -->
-            <div class="quick-nav">
-                <span class="quick-nav-label">📍 快速跳转：</span>
-                <a href="#person-lin" class="nav-chip">👤 林姐</a>
-                <a href="#person-zhao" class="nav-chip">👤 赵妹</a>
-                <a href="#person-shulin" class="nav-chip">👤 树林</a>
-                <a href="#person-gouzi" class="nav-chip">👤 狗子</a>
-                <a href="#person-feimei" class="nav-chip">👤 肥美</a>
-            </div>
-
-            <!-- 1. 林姐 -->
-            <div class="person-card" id="person-lin" data-person="lin">
-                <h3>👤 林姐 的旅行空间</h3>
-                ${renderPersonContent()}
-            </div>
-
-            <!-- 2. 赵妹 -->
-            <div class="person-card" id="person-zhao" data-person="zhao">
-                <h3>👤 赵妹 的旅行空间</h3>
-                ${renderPersonContent()}
-            </div>
-
-            <!-- 3. 树林 -->
-            <div class="person-card" id="person-shulin" data-person="shulin">
-                <h3>👤 树林 的旅行空间</h3>
-                ${renderPersonContent()}
-            </div>
-
-            <!-- 4. 狗子 -->
-            <div class="person-card" id="person-gouzi" data-person="gouzi">
-                <h3>👤 狗子 的旅行空间</h3>
-                ${renderPersonContent()}
-            </div>
-
-            <!-- 5. 肥美 -->
-            <div class="person-card" id="person-feimei" data-person="feimei">
-                <h3>👤 肥美 的旅行空间</h3>
-                ${renderPersonContent()}
-            </div>
-
-        </div>
-    </div>
-
-    <script>
-        // === Supabase 云端直接配置 ===
-        const SUPABASE_URL = "https://eyqiiurqccydjnfkyskd.supabase.co";
-        const SUPABASE_ANON_KEY = "sb_publishable_1eGLF31m-1KAyCJp2DEwGg_7mqCLlRQ";
-
-        // 设置密码为 0815
-        const CORRECT_PASSWORD = "0815";
-
-        function checkPassword() {
-            const inputVal = document.getElementById("password-input").value;
-            const errorTip = document.getElementById("error-msg");
-
-            if (inputVal === CORRECT_PASSWORD) {
-                document.getElementById("auth-overlay").style.display = "none";
-                document.getElementById("main-content").style.display = "block";
-                loadCloudData(); // 登录成功后拉取云端数据
-            } else {
-                errorTip.style.display = "block";
-            }
-        }
-
-        // 支持回车快捷登录
-        document.getElementById("password-input").addEventListener("keypress", function(e) {
-            if (e.key === 'Enter') {
-                checkPassword();
-            }
-        });
-
-        // 视图切换
-        function switchView(viewId) {
-            document.querySelectorAll('.view-section').forEach(section => {
-                section.classList.remove('active');
-            });
-            document.getElementById(viewId).classList.add('active');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        // 动态生成每个人卡片内部的 HTML 结构
-        function renderPersonContent() {
-            return `
-                <div class="section-block" data-field="sec1">
-                    <label>🏞️ 流连忘返的风景</label>
-                    <textarea class="saved-textarea" placeholder="分享最让你流连忘返的风景..." oninput="debounceSave()"></textarea>
-                    <div class="photo-upload-area">
-                        <label class="upload-btn">➕ 上传照片<input type="file" class="hidden-file-input" accept="image/*" onchange="handleImageUpload(this)"></label>
-                        <div class="photo-preview-container"></div>
-                    </div>
-                </div>
-                <div class="section-block" data-field="sec2">
-                    <label>🍲 垂涎欲滴的美食</label>
-                    <textarea class="saved-textarea" placeholder="分享让你垂涎欲滴的美食..." oninput="debounceSave()"></textarea>
-                    <div class="photo-upload-area">
-                        <label class="upload-btn">➕ 上传照片<input type="file" class="hidden-file-input" accept="image/*" onchange="handleImageUpload(this)"></label>
-                        <div class="photo-preview-container"></div>
-                    </div>
-                </div>
-                <div class="section-block" data-field="sec3">
-                    <label>💡 记忆犹新的事物</label>
-                    <textarea class="saved-textarea" placeholder="分享旅途中记忆犹新的人或事..." oninput="debounceSave()"></textarea>
-                    <div class="photo-upload-area">
-                        <label class="upload-btn">➕ 上传照片<input type="file" class="hidden-file-input" accept="image/*" onchange="handleImageUpload(this)"></label>
-                        <div class="photo-preview-container"></div>
-                    </div>
-                </div>
-                <div class="section-block" data-field="sec4">
-                    <label>✍️ 所感所受</label>
-                    <textarea class="saved-textarea" placeholder="写下这次旅行内心的所感所受..." oninput="debounceSave()"></textarea>
-                    <div class="photo-upload-area">
-                        <label class="upload-btn">➕ 上传照片<input type="file" class="hidden-file-input" accept="image/*" onchange="handleImageUpload(this)"></label>
-                        <div class="photo-preview-container"></div>
-                    </div>
-                </div>
-                <!-- 互动表情栏 -->
-                <div class="reaction-bar">
-                    <button class="reaction-btn" onclick="toggleReaction(this)">👍 点赞 <span class="count">0</span></button>
-                    <button class="reaction-btn" onclick="toggleReaction(this)">😆 大笑 <span class="count">0</span></button>
-                    <button class="reaction-btn" onclick="toggleReaction(this)">😲 吃惊 <span class="count">0</span></button>
-                    <button class="reaction-btn" onclick="toggleReaction(this)">🤝 同意 <span class="count">0</span></button>
-                </div>
-            `;
-        }
-
-        // 初始化卡片结构
-        window.addEventListener('DOMContentLoaded', () => {
-            const cards = document.querySelectorAll('.person-card');
-            cards.forEach(card => {
-                if(!card.querySelector('.section-block')) {
-                    const titleHTML = card.querySelector('h3').outerHTML;
-                    card.innerHTML = titleHTML + renderPersonContent();
-                }
-            });
-        });
-
-        // 防抖保存
-        let saveTimer = null;
-        function debounceSave() {
-            clearTimeout(saveTimer);
-            saveTimer = setTimeout(() => {
-                saveCloudData();
-            }, 800);
-        }
-
-        // === 从云端加载数据 ===
-        async function loadCloudData() {
-            try {
-                const response = await fetch(`${SUPABASE_URL}/rest/v1/trip_posts?select=*`, {
-                    headers: {
-                        "apikey": SUPABASE_ANON_KEY,
-                        "Authorization": `Bearer ${SUPABASE_ANON_KEY}`
-                    }
-                });
-                if (!response.ok) return;
-                const data = await response.json();
-                if (!Array.isArray(data)) return;
-
-                data.forEach(row => {
-                    const personId = row.person_id;
-                    const card = document.querySelector(`.person-card[data-person="${personId}"]`);
-                    if (!card) return;
-
-                    const content = row.content_data;
-                    if (!content) return;
-
-                    if (content.sections) {
-                        const blocks = card.querySelectorAll('.section-block');
-                        blocks.forEach((block, idx) => {
-                            const secData = content.sections[idx];
-                            if (!secData) return;
-
-                            const textarea = block.querySelector('textarea');
-                            textarea.value = secData.text || '';
-
-                            const previewContainer = block.querySelector('.photo-preview-container');
-                            previewContainer.innerHTML = '';
-                            if (secData.images) {
-                                secData.images.forEach(src => {
-                                    appendImageToContainer(previewContainer, src, false);
-                                });
-                            }
-                        });
-                    }
-
-                    if (content.reactions) {
-                        const reactionBtns = card.querySelectorAll('.reaction-btn');
-                        content.reactions.forEach((rec, idx) => {
-                            if (reactionBtns[idx]) {
-                                if (rec.active) reactionBtns[idx].classList.add('active');
-                                else reactionBtns[idx].classList.remove('active');
-                                reactionBtns[idx].querySelector('.count').textContent = rec.count || '0';
-                            }
-                        });
-                    }
-                });
-            } catch (err) {
-                console.error("加载云端数据异常:", err);
-            }
-        }
-
-        // === 保存数据到云端 ===
-        async function saveCloudData(personCard = null) {
-            const cards = personCard ? [personCard] : document.querySelectorAll('.person-card');
-
-            for (const card of cards) {
-                const personId = card.getAttribute('data-person');
-                const sections = {};
-
-                const blocks = card.querySelectorAll('.section-block');
-                blocks.forEach((block, idx) => {
-                    const textarea = block.querySelector('textarea');
-                    const thumbs = [];
-                    block.querySelectorAll('.thumb').forEach(img => {
-                        thumbs.push(img.src);
-                    });
-                    sections[idx] = {
-                        text: textarea.value,
-                        images: thumbs
-                    };
-                });
-
-                const reactions = [];
-                card.querySelectorAll('.reaction-btn').forEach(btn => {
-                    reactions.push({
-                        active: btn.classList.contains('active'),
-                        count: btn.querySelector('.count').textContent
-                    });
-                });
-
-                const contentData = { sections, reactions };
-
-                try {
-                    await fetch(`${SUPABASE_URL}/rest/v1/trip_posts`, {
-                        method: "POST",
-                        headers: {
-                            "apikey": SUPABASE_ANON_KEY,
-                            "Authorization": `Bearer ${SUPABASE_ANON_KEY}`,
-                            "Content-Type": "application/json",
-                            "Prefer": "resolution=merge-duplicates"
-                        },
-                        body: JSON.stringify({ person_id: personId, content_data: contentData })
-                    });
-                } catch (err) {
-                    console.error("云端保存异常:", err);
-                }
-            }
-        }
-
-        // 自动压缩并处理图片上传
-        function handleImageUpload(input) {
-            const previewContainer = input.parentElement.nextElementSibling;
-            const card = input.closest('.person-card');
-            if (input.files && input.files[0]) {
-                const file = input.files[0];
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const img = new Image();
-                    img.src = e.target.result;
-                    img.onload = function() {
-                        // 创建画布进行等比压缩（最大宽度/高度 600px，保证清晰又不会太大）
-                        const canvas = document.createElement('canvas');
-                        let width = img.width;
-                        let height = img.height;
-                        const max_size = 600;
-
-                        if (width > height && width > max_size) {
-                            height *= max_size / width;
-                            width = max_size;
-                        } else if (height > max_size) {
-                            width *= max_size / height;
-                            height = max_size;
-                        }
-
-                        canvas.width = width;
-                        canvas.height = height;
-                        const ctx = canvas.getContext('2d');
-                        ctx.drawImage(img, 0, 0, width, height);
-
-                        // 转为轻量的 JPEG 格式并压缩画质 (0.7)
-                        const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.7);
-
-                        appendImageToContainer(previewContainer, compressedDataUrl, true);
-                        saveCloudData(card);
-                        input.value = '';
-                    }
-                }
-                reader.readAsDataURL(file);
-            }
-        }
-
-        // 辅助函数：将图片放入容器并绑定删除事件
-        function appendImageToContainer(container, src, shouldSave = false) {
-            const wrapper = document.createElement('div');
-            wrapper.className = 'thumb-wrapper';
-
-            const img = document.createElement('img');
-            img.src = src;
-            img.className = 'thumb';
-
-            const deleteBtn = document.createElement('button');
-            deleteBtn.className = 'delete-btn';
-            deleteBtn.innerHTML = '×';
-            deleteBtn.title = '删除照片';
-            deleteBtn.onclick = function() {
-                const card = wrapper.closest('.person-card');
-                wrapper.remove();
-                saveCloudData(card);
-            };
-
-            wrapper.appendChild(img);
-            wrapper.appendChild(deleteBtn);
-            container.appendChild(wrapper);
-
-            if (shouldSave) {
-                const card = container.closest('.person-card');
-                saveCloudData(card);
-            }
-        }
-
-        // 互动按钮点赞切换
-        function toggleReaction(btn) {
-            btn.classList.toggle('active');
-            const countSpan = btn.querySelector('.count');
-            let count = parseInt(countSpan.textContent);
-            if (btn.classList.contains('active')) {
-                count += 1;
-            } else {
-                count -= 1;
-            }
-            countSpan.textContent = count;
-            
-            const card = btn.closest('.person-card');
-            saveCloudData(card);
-        }
-    </script>
-</body>
-</html>
