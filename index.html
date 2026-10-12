@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>下一站 遇见美好 - 5人旅行空间</title>
+    <!-- 引入 Supabase 官方 JavaScript 客户端库 -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root {
             --bg-gradient: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
@@ -62,7 +64,7 @@
             letter-spacing: 1px;
         }
 
-        /* 密码保护遮罩层：大主题保持 2027 */
+        /* 密码保护遮罩层 */
         #auth-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -263,7 +265,7 @@
             transform: translateX(-4px);
         }
 
-        /* 四川行详情页专属大标题（无2027） */
+        /* 四川行详情页专属大标题 */
         .detail-header {
             text-align: center;
             margin-bottom: 30px;
@@ -434,9 +436,15 @@
             flex-wrap: wrap;
         }
 
-        .thumb {
+        .thumb-wrapper {
+            position: relative;
             width: 65px;
             height: 65px;
+        }
+
+        .thumb {
+            width: 100%;
+            height: 100%;
             object-fit: cover;
             border-radius: 12px;
             border: 2px solid #ffffff;
@@ -445,7 +453,32 @@
         }
 
         .thumb:hover {
-            transform: scale(1.08);
+            transform: scale(1.05);
+        }
+
+        .delete-btn {
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            background: #e53e3e;
+            color: white;
+            border: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            font-size: 12px;
+            font-weight: bold;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+            transition: transform 0.2s;
+        }
+
+        .delete-btn:hover {
+            transform: scale(1.2);
+            background: #c53030;
         }
 
         /* 互动表情栏样式 */
@@ -475,222 +508,4 @@
 
         .reaction-btn:hover {
             background: #edf2f7;
-            border-color: #cbd5e0;
-            transform: translateY(-2px);
-        }
-
-        .reaction-btn.active {
-            background: #fff5f5;
-            border-color: #FF6B6B;
-            color: #FF6B6B;
-            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.25);
-            transform: scale(1.03);
-        }
-    </style>
-</head>
-<body>
-
-    <!-- 密码输入遮罩层：大主题保持 “下一站 遇见美好” -->
-    <div id="auth-overlay">
-        <div class="auth-box">
-            <h2 class="neon-flash-title" style="font-size: 1.8rem;">下一站 遇见美好</h2>
-            <div class="sub-title" style="margin-top: 8px;">5人专属私密空间</div>
-            <p style="color: #718096; font-size: 0.9rem; margin-bottom: 25px;">请输入 4 位专属访问密码</p>
-            <input type="password" id="password-input" maxlength="4" placeholder="••••">
-            <button onclick="checkPassword()">开启回忆空间</button>
-            <div id="error-msg" class="error-tip">密码不对哦，试试 0815~</div>
-        </div>
-    </div>
-
-    <!-- 主体内容 -->
-    <div class="container" id="main-content">
-        <!-- 主页面大标题保持 2027 -->
-        <header>
-            <h1 class="neon-flash-title">下一站 遇见美好 ✈️</h1>
-            <p>5人旅行回忆纪录墙 ── 记录走过的足迹，共赴明年的山海之约</p>
-        </header>
-
-        <!-- 视图 1：主页面（目的地列表） -->
-        <div id="view-home" class="view-section active">
-            <div class="trip-grid">
-                <div class="trip-card-item" onclick="switchView('view-sichuan')">
-                    <div class="trip-info">
-                        <h3>🏔️ 四川行</h3>
-                        <p>林姐、赵妹、树林、狗子、肥美的5人行足迹回忆录与感悟墙</p>
-                    </div>
-                    <span class="trip-badge">进入空间 →</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- 视图 2：四川行详情页（完全独立，无 2027） -->
-        <div id="view-sichuan" class="view-section">
-            <button class="back-btn" onclick="switchView('view-home')">← 返回主页面</button>
-
-            <!-- 独立主题：四川行 -->
-            <div class="detail-header">
-                <h2>🏔️ 四川行</h2>
-                <p>5人专属回忆与感悟墙</p>
-            </div>
-
-            <!-- 顶部快速导航/搜索跳转栏 -->
-            <div class="quick-nav">
-                <span class="quick-nav-label">📍 快速跳转：</span>
-                <a href="#person-lin" class="nav-chip">👤 林姐</a>
-                <a href="#person-zhao" class="nav-chip">👤 赵妹</a>
-                <a href="#person-shulin" class="nav-chip">👤 树林</a>
-                <a href="#person-gouzi" class="nav-chip">👤 狗子</a>
-                <a href="#person-feimei" class="nav-chip">👤 肥美</a>
-            </div>
-
-            <!-- 1. 林姐 -->
-            <div class="person-card" id="person-lin">
-                <h3>👤 林姐 的旅行空间</h3>
-                ${renderPersonContent()}
-            </div>
-
-            <!-- 2. 赵妹 -->
-            <div class="person-card" id="person-zhao">
-                <h3>👤 赵妹 的旅行空间</h3>
-                ${renderPersonContent()}
-            </div>
-
-            <!-- 3. 树林 -->
-            <div class="person-card" id="person-shulin">
-                <h3>👤 树林 的旅行空间</h3>
-                ${renderPersonContent()}
-            </div>
-
-            <!-- 4. 狗子 -->
-            <div class="person-card" id="person-gouzi">
-                <h3>👤 狗子 的旅行空间</h3>
-                ${renderPersonContent()}
-            </div>
-
-            <!-- 5. 肥美 -->
-            <div class="person-card" id="person-feimei">
-                <h3>👤 肥美 的旅行空间</h3>
-                ${renderPersonContent()}
-            </div>
-
-        </div>
-    </div>
-
-    <script>
-        // 设置密码为 0815
-        const CORRECT_PASSWORD = "0815";
-
-        function checkPassword() {
-            const inputVal = document.getElementById("password-input").value;
-            const errorTip = document.getElementById("error-msg");
-
-            if (inputVal === CORRECT_PASSWORD) {
-                document.getElementById("auth-overlay").style.display = "none";
-                document.getElementById("main-content").style.display = "block";
-            } else {
-                errorTip.style.display = "block";
-            }
-        }
-
-        // 支持回车快捷登录
-        document.getElementById("password-input").addEventListener("keypress", function(e) {
-            if (e.key === 'Enter') {
-                checkPassword();
-            }
-        });
-
-        // 视图切换
-        function switchView(viewId) {
-            document.querySelectorAll('.view-section').forEach(section => {
-                section.classList.remove('active');
-            });
-            document.getElementById(viewId).classList.add('active');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        // 动态生成每个人卡片内部的 HTML 结构（含四大板块 + 互动按钮）
-        function renderPersonContent() {
-            return `
-                <div class="section-block">
-                    <label>🏞️ 流连忘返的风景</label>
-                    <textarea placeholder="分享最让你流连忘返的风景..."></textarea>
-                    <div class="photo-upload-area">
-                        <label class="upload-btn">➕ 上传照片<input type="file" class="hidden-file-input" accept="image/*" onchange="previewImage(this)"></label>
-                        <div class="photo-preview-container"></div>
-                    </div>
-                </div>
-                <div class="section-block">
-                    <label>🍲 垂涎欲滴的美食</label>
-                    <textarea placeholder="分享让你垂涎欲滴的美食..."></textarea>
-                    <div class="photo-upload-area">
-                        <label class="upload-btn">➕ 上传照片<input type="file" class="hidden-file-input" accept="image/*" onchange="previewImage(this)"></label>
-                        <div class="photo-preview-container"></div>
-                    </div>
-                </div>
-                <div class="section-block">
-                    <label>💡 记忆犹新的事物</label>
-                    <textarea placeholder="分享旅途中记忆犹新的人或事..."></textarea>
-                    <div class="photo-upload-area">
-                        <label class="upload-btn">➕ 上传照片<input type="file" class="hidden-file-input" accept="image/*" onchange="previewImage(this)"></label>
-                        <div class="photo-preview-container"></div>
-                    </div>
-                </div>
-                <div class="section-block">
-                    <label>✍️ 所感所受</label>
-                    <textarea placeholder="写下这次旅行内心的所感所受..."></textarea>
-                    <div class="photo-upload-area">
-                        <label class="upload-btn">➕ 上传照片<input type="file" class="hidden-file-input" accept="image/*" onchange="previewImage(this)"></label>
-                        <div class="photo-preview-container"></div>
-                    </div>
-                </div>
-                <!-- 互动表情栏 -->
-                <div class="reaction-bar">
-                    <button class="reaction-btn" onclick="toggleReaction(this)">👍 点赞 <span class="count">0</span></button>
-                    <button class="reaction-btn" onclick="toggleReaction(this)">😆 大笑 <span class="count">0</span></button>
-                    <button class="reaction-btn" onclick="toggleReaction(this)">😲 吃惊 <span class="count">0</span></button>
-                    <button class="reaction-btn" onclick="toggleReaction(this)">🤝 同意 <span class="count">0</span></button>
-                </div>
-            `;
-        }
-
-        // 页面刚加载时，自动把模板塞进对应的人员卡片中
-        window.addEventListener('DOMContentLoaded', () => {
-            const cards = document.querySelectorAll('.person-card');
-            cards.forEach(card => {
-                if(!card.innerHTML.includes('section-block')) {
-                    const titleHTML = card.querySelector('h3').outerHTML;
-                    card.innerHTML = titleHTML + renderPersonContent();
-                }
-            });
-        });
-
-        // 图片选择并即时生成缩略图
-        function previewImage(input) {
-            const previewContainer = input.parentElement.nextElementSibling;
-            if (input.files && input.files[0]) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const img = document.createElement('img');
-                    img.src = e.target.result;
-                    img.className = 'thumb';
-                    previewContainer.appendChild(img);
-                }
-                reader.readAsDataURL(input.files[0]);
-            }
-        }
-
-        // 互动按钮点赞/大笑等计数切换
-        function toggleReaction(btn) {
-            btn.classList.toggle('active');
-            const countSpan = btn.querySelector('.count');
-            let count = parseInt(countSpan.textContent);
-            if (btn.classList.contains('active')) {
-                count += 1;
-            } else {
-                count -= 1;
-            }
-            countSpan.textContent = count;
-        }
-    </script>
-</body>
-</html>
+            border
