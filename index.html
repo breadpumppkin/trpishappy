@@ -604,3 +604,132 @@
                 reactions.push({
                     active: btnElem.classList.contains('active'),
                     count: btnElem.querySelector('.count').textContent
+                });
+            });
+
+            const contentData = { sections, reactions };
+            cloudDataCache[personId] = contentData;
+
+            try {
+                // 1. 先查询该用户是否已经在云端有记录
+                const checkRes = await fetch(`${SUPABASE_URL}/rest/v1/trip_posts?person_id=eq.${personId}&select=person_id`, {
+                    headers: {
+                        "apikey": SUPABASE_ANON_KEY,
+                        "Authorization": `Bearer ${SUPABASE_ANON_KEY}`
+                    }
+                });
+                const existing = await checkRes.json();
+
+                let response;
+                if (existing && existing.length > 0) {
+                    // 2A. 如果存在，用 PATCH 更新
+                    response = await fetch(`${SUPABASE_URL}/rest/v1/trip_posts?person_id=eq.${personId}`, {
+                        method: "PATCH",
+                        headers: {
+                            "apikey": SUPABASE_ANON_KEY,
+                            "Authorization": `Bearer ${SUPABASE_ANON_KEY}`,
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({ content_data: contentData })
+                    });
+                } else {
+                    // 2B. 如果不存在，用 POST 插入
+                    response = await fetch(`${SUPABASE_URL}/rest/v1/trip_posts`, {
+                        method: "POST",
+                        headers: {
+                            "apikey": SUPABASE_ANON_KEY,
+                            "Authorization": `Bearer ${SUPABASE_ANON_KEY}`,
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({ person_id: personId, content_data: contentData })
+                    });
+                }
+
+                if (response.ok) {
+                    const tip = card.querySelector('.save-tip');
+                    tip.style.opacity = '1';
+                    setTimeout(() => {
+                        tip.style.opacity = '0';
+                    }, 2000);
+                } else {
+                    const errText = await response.text();
+                    console.error("保存失败返回:", errText);
+                    alert("保存失败，请检查网络后重试。");
+                }
+            } catch (err) {
+                console.error("云端保存异常:", err);
+                alert("保存异常，请稍后重试。");
+            }
+        }
+
+        function handleImageUpload(input) {
+            const previewContainer = input.parentElement.nextElementSibling;
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = new Image();
+                    img.src = e.target.result;
+                    img.onload = function() {
+                        const canvas = document.createElement('canvas');
+                        let width = img.width;
+                        let height = img.height;
+                        const max_size = 600;
+
+                        if (width > height && width > max_size) {
+                            height *= max_size / width;
+                            width = max_size;
+                        } else if (height > max_size) {
+                            width *= max_size / height;
+                            height = max_size;
+                        }
+
+                        canvas.width = width;
+                        canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+
+                        const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.7);
+                        appendImageElement(previewContainer, compressedDataUrl);
+                        input.value = '';
+                    }
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function appendImageElement(container, src) {
+            const wrapper = document.createElement('div');
+            wrapper.className = 'thumb-wrapper';
+
+            const img = document.createElement('img');
+            img.src = src;
+            img.className = 'thumb';
+
+            const deleteBtn = document.createElement('button');
+            deleteBtn.className = 'delete-btn';
+            deleteBtn.innerHTML = '×';
+            deleteBtn.onclick = function() {
+                wrapper.remove();
+            };
+
+            wrapper.appendChild(img);
+            wrapper.appendChild(deleteBtn);
+            container.appendChild(wrapper);
+        }
+
+        function toggleReaction(btn, index) {
+            btn.classList.toggle('active');
+            const countSpan = btn.querySelector('.count');
+            let count = parseInt(countSpan.textContent);
+            count = btn.classList.contains('active') ? count + 1 : count - 1;
+            countSpan.textContent = count;
+        }
+
+        setInterval(() => {
+            if (document.getElementById("main-content").style.display === "block") {
+                loadCloudData();
+            }
+        }, 15000);
+    </script>
+</body>
+</html>
