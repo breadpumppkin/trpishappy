@@ -4,8 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>下一站 遇见美好 - 5人旅行空间</title>
-    <!-- 引入 Supabase 官方 JavaScript 客户端库 -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root {
             --bg-gradient: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
@@ -610,11 +608,9 @@
     </div>
 
     <script>
-        // === Supabase 云端配置 ===
+        // === Supabase 云端直接配置 (使用纯 API 请求，绝不卡死页面) ===
         const SUPABASE_URL = "https://eyqiiurqccydjnfkyskd.supabase.co";
         const SUPABASE_ANON_KEY = "sb_publishable_1eGLF31m-1KAyCJp2DEwGg_7mqCLlRQ";
-        const { createClient } = supabase;
-        const _supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         // 设置密码为 0815
         const CORRECT_PASSWORD = "0815";
@@ -626,7 +622,7 @@
             if (inputVal === CORRECT_PASSWORD) {
                 document.getElementById("auth-overlay").style.display = "none";
                 document.getElementById("main-content").style.display = "block";
-                loadCloudData(); // 登录成功后立刻从云端拉取最新数据
+                loadCloudData(); // 登录成功后拉取云端数据
             } else {
                 errorTip.style.display = "block";
             }
@@ -704,7 +700,7 @@
             });
         });
 
-        // 防抖保存（避免打字时频繁请求云端）
+        // 防抖保存
         let saveTimer = null;
         function debounceSave() {
             clearTimeout(saveTimer);
@@ -713,15 +709,18 @@
             }, 800);
         }
 
-        // === 从 Supabase 云端加载数据 ===
+        // === 从云端加载数据 ===
         async function loadCloudData() {
             try {
-                const { data, error } = await _supabase.from('trip_posts').select('*');
-                if (error) {
-                    console.error("加载云端数据出错:", error);
-                    return;
-                }
-                if (!data) return;
+                const response = await fetch(`${SUPABASE_URL}/rest/v1/trip_posts?select=*`, {
+                    headers: {
+                        "apikey": SUPABASE_ANON_KEY,
+                        "Authorization": `Bearer ${SUPABASE_ANON_KEY}`
+                    }
+                });
+                if (!response.ok) return;
+                const data = await response.json();
+                if (!Array.isArray(data)) return;
 
                 data.forEach(row => {
                     const personId = row.person_id;
@@ -731,7 +730,6 @@
                     const content = row.content_data;
                     if (!content) return;
 
-                    // 恢复文本和图片
                     if (content.sections) {
                         const blocks = card.querySelectorAll('.section-block');
                         blocks.forEach((block, idx) => {
@@ -751,7 +749,6 @@
                         });
                     }
 
-                    // 恢复点赞状态
                     if (content.reactions) {
                         const reactionBtns = card.querySelectorAll('.reaction-btn');
                         content.reactions.forEach((rec, idx) => {
@@ -764,13 +761,12 @@
                     }
                 });
             } catch (err) {
-                console.error("同步云端数据异常:", err);
+                console.error("加载云端数据异常:", err);
             }
         }
 
-        // === 保存当前数据到 Supabase 云端 ===
+        // === 保存数据到云端 ===
         async function saveCloudData(personCard = null) {
-            // 如果指定了某个人卡片就只存这个人，否则同步所有人
             const cards = personCard ? [personCard] : document.querySelectorAll('.person-card');
 
             for (const card of cards) {
@@ -800,13 +796,19 @@
 
                 const contentData = { sections, reactions };
 
-                // 写入云端数据库（使用 upsert 根据 person_id 自动更新或插入）
-                const { error } = await _supabase
-                    .from('trip_posts')
-                    .upsert({ person_id: personId, content_data: contentData }, { onConflict: 'person_id' });
-
-                if (error) {
-                    console.error("云端保存失败:", error);
+                try {
+                    await fetch(`${SUPABASE_URL}/rest/v1/trip_posts`, {
+                        method: "POST",
+                        headers: {
+                            "apikey": SUPABASE_ANON_KEY,
+                            "Authorization": `Bearer ${SUPABASE_ANON_KEY}`,
+                            "Content-Type": "application/json",
+                            "Prefer": "resolution=merge-duplicates"
+                        },
+                        body: JSON.stringify({ person_id: personId, content_data: contentData })
+                    });
+                } catch (err) {
+                    console.error("云端保存异常:", err);
                 }
             }
         }
@@ -819,7 +821,7 @@
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     appendImageToContainer(previewContainer, e.target.result, true);
-                    saveCloudData(card); // 上传后立即保存到云端
+                    saveCloudData(card);
                     input.value = '';
                 }
                 reader.readAsDataURL(input.files[0]);
@@ -842,7 +844,7 @@
             deleteBtn.onclick = function() {
                 const card = wrapper.closest('.person-card');
                 wrapper.remove();
-                saveCloudData(card); // 删除后立即更新云端
+                saveCloudData(card);
             };
 
             wrapper.appendChild(img);
@@ -868,7 +870,7 @@
             countSpan.textContent = count;
             
             const card = btn.closest('.person-card');
-            saveCloudData(card); // 点赞后立即同步到云端
+            saveCloudData(card);
         }
     </script>
 </body>
