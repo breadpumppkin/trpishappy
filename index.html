@@ -608,7 +608,7 @@
     </div>
 
     <script>
-        // === Supabase 云端直接配置 (使用纯 API 请求，绝不卡死页面) ===
+        // === Supabase 云端直接配置 ===
         const SUPABASE_URL = "https://eyqiiurqccydjnfkyskd.supabase.co";
         const SUPABASE_ANON_KEY = "sb_publishable_1eGLF31m-1KAyCJp2DEwGg_7mqCLlRQ";
 
@@ -813,18 +813,45 @@
             }
         }
 
-        // 处理图片上传
+        // 自动压缩并处理图片上传
         function handleImageUpload(input) {
             const previewContainer = input.parentElement.nextElementSibling;
             const card = input.closest('.person-card');
             if (input.files && input.files[0]) {
+                const file = input.files[0];
                 const reader = new FileReader();
                 reader.onload = function(e) {
-                    appendImageToContainer(previewContainer, e.target.result, true);
-                    saveCloudData(card);
-                    input.value = '';
+                    const img = new Image();
+                    img.src = e.target.result;
+                    img.onload = function() {
+                        // 创建画布进行等比压缩（最大宽度/高度 600px，保证清晰又不会太大）
+                        const canvas = document.createElement('canvas');
+                        let width = img.width;
+                        let height = img.height;
+                        const max_size = 600;
+
+                        if (width > height && width > max_size) {
+                            height *= max_size / width;
+                            width = max_size;
+                        } else if (height > max_size) {
+                            width *= max_size / height;
+                            height = max_size;
+                        }
+
+                        canvas.width = width;
+                        canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+
+                        // 转为轻量的 JPEG 格式并压缩画质 (0.7)
+                        const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.7);
+
+                        appendImageToContainer(previewContainer, compressedDataUrl, true);
+                        saveCloudData(card);
+                        input.value = '';
+                    }
                 }
-                reader.readAsDataURL(input.files[0]);
+                reader.readAsDataURL(file);
             }
         }
 
