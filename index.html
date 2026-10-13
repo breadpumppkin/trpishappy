@@ -319,8 +319,8 @@
                 <div style="font-size: 0.8rem; color: var(--text-muted);" id="gc-timestamp-display"></div>
 
                 <div style="display: flex; gap: 10px; margin-top: 5px;">
-                    <button class="primary-btn" style="flex: 1;" onclick="saveToCloud()">💾 保存修改</button>
-                    <button class="primary-btn" style="flex: 1; background: linear-gradient(135deg, #e53e3e 0%, #c53030 100%;" onclick="deleteGlobalComment()">🗑️ 删除</button>
+                    <button class="primary-btn" style="flex: 1;" onclick="saveGlobalCommentChanges()">💾 保存修改</button>
+                    <button class="primary-btn" style="flex: 1; background: linear-gradient(135deg, #e53e3e 0%, #c53030 100%);" onclick="deleteGlobalComment()">🗑️ 删除</button>
                 </div>
             </div>
         </div>
@@ -450,7 +450,6 @@
             if (e.key === 'Enter') checkPassword();
         });
 
-        // 页面加载完成后，直接通过 JS 绑定保存按钮的点击事件，绝对不会失效
         window.addEventListener('DOMContentLoaded', () => {
             const saveBtn = document.getElementById('main-save-btn');
             if (saveBtn) {
@@ -788,16 +787,16 @@
 
         async function saveToCloud() {
             try {
-                const res = await fetch(`${SUPABASE_URL}/rest/v1/trip_posts`, {
-                    method: "POST",
+                // 使用 PATCH 或带 on_conflict 的 POST 来真正更新完整 JSON 树
+                const res = await fetch(`${SUPABASE_URL}/rest/v1/trip_posts?person_id=eq.${SYNC_KEY}`, {
+                    method: "PATCH",
                     headers: {
                         "apikey": SUPABASE_ANON_KEY,
                         "Authorization": `Bearer ${SUPABASE_ANON_KEY}`,
                         "Content-Type": "application/json",
-                        "Prefer": "resolution=merge-duplicates"
+                        "Prefer": "return=minimal"
                     },
                     body: JSON.stringify({ 
-                        person_id: SYNC_KEY, 
                         content_data: { 
                             milestones: milestonesDataCache,
                             globalComments: globalCommentsCache 
