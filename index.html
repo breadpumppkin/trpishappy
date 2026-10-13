@@ -254,10 +254,20 @@
             cursor: pointer; width: 100%; margin-top: 10px; text-align: center;
         }
 
-        .save-tip { font-size: 0.85rem; color: #38a169; font-weight: bold; opacity: 0; transition: opacity 0.3s; }
+        .save-tip { font-size: 0.85rem; color: #38a169; font-weight: bold; opacity: 0; transition: opacity 0.3s; margin-left: 8px; display: inline-block; }
+        
+        /* 未保存状态下的提醒闪烁横幅 */
+        #unsaved-banner {
+            position: fixed; top: 0; left: 0; width: 100%; background: #e53e3e; color: white;
+            text-align: center; padding: 8px; font-size: 0.85rem; font-weight: bold; z-index: 9998;
+            display: none; box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
     </style>
 </head>
 <body>
+
+    <!-- 未保存提醒横幅 -->
+    <div id="unsaved-banner">⚠️ 您有修改的内容尚未保存到云端，请记得点击“保存修改”按钮！</div>
 
     <div id="auth-overlay">
         <div class="auth-box">
@@ -359,7 +369,6 @@
                 <div class="nav-back-bar">
                     <button class="back-home-btn" onclick="switchView('view-home')">← 返回主页面</button>
                     <span style="font-weight: 800; color: #2e7d32; font-size: 0.95rem;">下一站 遇见美好 ✈️</span>
-                    <span id="global-save-tip" class="save-tip">✓ 云端已同步！</span>
                 </div>
                 <h1 class="neon-flash-title" style="font-size: 1.8rem;">🐼 2026 四川全景足迹</h1>
             </header>
@@ -381,8 +390,9 @@
                         <h2 style="font-size: 1.25rem; font-weight: 800; color: var(--text-main);">🌊 足迹</h2>
                         <p style="color: var(--text-muted); font-size: 0.8rem; margin-top: 2px;">左右滑动查看各大站，点击小卡片展开留言</p>
                     </div>
-                    <div>
+                    <div style="display: flex; align-items: center; flex-wrap: wrap;">
                         <button id="main-save-btn" class="primary-btn" style="font-size: 0.9rem; padding: 10px 16px;">💾 保存修改</button>
+                        <span id="global-save-tip" class="save-tip">✓ 云端已同步！</span>
                     </div>
                 </div>
 
@@ -435,6 +445,7 @@
         let currentEditingMIdx = null;
         let currentEditingSIdx = null;
         let draggedSubItem = null;
+        let hasUnsavedChanges = false; // 用于标记是否有未保存的改动
 
         function checkPassword() {
             if (document.getElementById("password-input").value === CORRECT_PASSWORD) {
@@ -458,6 +469,26 @@
                 });
             }
         });
+
+        // 核心：当用户尝试关闭、刷新或离开页面时，如果有未保存的改动，浏览器会进行拦截提醒
+        window.addEventListener('beforeunload', (e) => {
+            if (hasUnsavedChanges) {
+                e.preventDefault();
+                e.returnValue = ''; // 标准写法，用于触发浏览器默认拦截弹窗
+            }
+        });
+
+        function markUnsaved() {
+            hasUnsavedChanges = true;
+            const banner = document.getElementById('unsaved-banner');
+            if (banner) banner.style.display = 'block';
+        }
+
+        function clearUnsaved() {
+            hasUnsavedChanges = false;
+            const banner = document.getElementById('unsaved-banner');
+            if (banner) banner.style.display = 'none';
+        }
 
         function switchView(viewId) {
             document.querySelectorAll('.app-view').forEach(v => v.classList.remove('active-view'));
@@ -502,6 +533,7 @@
                     milestonesDataCache = JSON.parse(JSON.stringify(defaultMilestones));
                     globalCommentsCache = [];
                 }
+                clearUnsaved(); // 加载完后重置未保存状态
                 renderSketchTimeline();
                 renderGlobalComments();
             } catch (err) { 
@@ -543,6 +575,7 @@
                 text: "",
                 bgColor: "#ffffff"
             });
+            markUnsaved(); // 标记有未保存改动
             renderGlobalComments();
             openGlobalCommentModal(globalCommentsCache.length - 1);
         }
@@ -577,15 +610,17 @@
             const selectedBg = document.querySelector('input[name="gc-bg-color"]:checked');
             if (selectedBg) item.bgColor = selectedBg.value;
             
+            markUnsaved(); // 标记有未保存改动
             closeGlobalCommentModal();
             renderGlobalComments();
-            saveToCloud();
+            saveToCloud(); // 自动触发保存
         }
 
         function deleteGlobalComment() {
             if (currentEditingGlobalIndex === null) return;
             if (confirm("确定要删除这条整体旅行留言吗？")) {
                 globalCommentsCache.splice(currentEditingGlobalIndex, 1);
+                markUnsaved();
                 closeGlobalCommentModal();
                 renderGlobalComments();
                 saveToCloud();
@@ -603,8 +638,9 @@
                 milestonesDataCache[mIdx].subMilestones = [];
             }
             milestonesDataCache[mIdx].subMilestones.push({ date: timeVal, place: placeVal, comments: [] });
+            markUnsaved(); // 标记有未保存改动
             renderSketchTimeline();
-            saveToCloud();
+            saveToCloud(); // 自动保存
         }
 
         function editSubMilestone(mIdx, sIdx, event) {
@@ -616,6 +652,7 @@
             const parts = input.split(/[,，]/);
             if (parts[0] !== undefined) sub.date = parts[0].trim();
             if (parts[1] !== undefined) sub.place = parts[1].trim().replace('地点名称', '').trim();
+            markUnsaved();
             renderSketchTimeline();
             saveToCloud();
         }
@@ -624,6 +661,7 @@
             event.stopPropagation();
             if (confirm("确定要删除这个小时间点吗？")) {
                 milestonesDataCache[mIdx].subMilestones.splice(sIdx, 1);
+                markUnsaved();
                 renderSketchTimeline();
                 saveToCloud();
             }
@@ -654,6 +692,7 @@
             const list = milestonesDataCache[targetMIdx].subMilestones;
             const [movedItem] = list.splice(sourceSIdx, 1);
             list.splice(targetSIdx, 0, movedItem);
+            markUnsaved();
             renderSketchTimeline();
             saveToCloud();
         }
@@ -739,7 +778,7 @@
                         </div>
                         <button class="detail-btn" onclick="deleteModalComment(${cIdx})" style="padding:2px 6px; font-size:0.7rem; background:#fff5f5; color:#e53e3e; border-color:#fed7d7; width:auto;">×</button>
                     </div>
-                    <textarea oninput="updateModalCommentField(${cIdx}, 'text', this.value)" placeholder="写下您的感想、评价...">${comm.text || ''}</textarea>
+                    <textarea oninput="updateModalCommentField(${cIdx}, 'text', this.value); markUnsaved();" placeholder="写下您的感想、评价...">${comm.text || ''}</textarea>
                     <div class="comment-footer">
                         <div class="reaction-bar">
                             ${reactionLabels.map((label, rIdx) => `
@@ -761,12 +800,14 @@
                 author: "", timestamp: getCurrentDateTime(), text: "",
                 reactions: Array(4).fill().map(() => ({ count: 0, active: false }))
             });
+            markUnsaved();
             renderModalContent();
         }
 
         function deleteModalComment(cIdx) {
             const sub = milestonesDataCache[currentEditingMIdx].subMilestones[currentEditingSIdx];
             sub.comments.splice(cIdx, 1);
+            markUnsaved();
             renderModalContent();
         }
 
@@ -782,12 +823,12 @@
             const rec = sub.comments[cIdx].reactions[rIdx];
             rec.active = !rec.active;
             rec.count = rec.active ? rec.count + 1 : Math.max(0, rec.count - 1);
+            markUnsaved();
             renderModalContent();
         }
 
         async function saveToCloud() {
             try {
-                // 使用 PATCH 或带 on_conflict 的 POST 来真正更新完整 JSON 树
                 const res = await fetch(`${SUPABASE_URL}/rest/v1/trip_posts?person_id=eq.${SYNC_KEY}`, {
                     method: "PATCH",
                     headers: {
@@ -805,6 +846,7 @@
                 });
 
                 if (res.ok) {
+                    clearUnsaved(); // 保存成功后解除未保存状态并隐藏提示横幅
                     const tip = document.getElementById('global-save-tip');
                     if(tip) {
                         tip.style.opacity = '1';
