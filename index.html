@@ -636,17 +636,22 @@
             item.text = document.getElementById('gc-text-content').value;
             const selectedBg = document.querySelector('input[name="gc-bg-color"]:checked');
             if (selectedBg) item.bgColor = selectedBg.value;
+            
             closeGlobalCommentModal();
+            renderGlobalComments(); // 重新渲染页面，防止画面消失
+            saveToCloud();          // 自动同步到云端
         }
 
+        // 修改后的全体留言删除逻辑（核心修复点）
         function deleteGlobalComment() {
             if (currentEditingGlobalIndex === null) return;
             if (confirm("确定要删除这条整体旅行留言吗？")) {
                 globalCommentsCache.splice(currentEditingGlobalIndex, 1);
                 closeGlobalCommentModal();
+                renderGlobalComments(); // 重新渲染页面，防止画面消失
+                saveToCloud();          // 删除后立即自动保存到云端
             }
         }
-
         // 各站点波浪分支逻辑
         function promptAddSub(mIdx) {
             const input = prompt("请输入【时间】与【地点】\n格式：时间, 地点\n例如: 14:00, 宽窄巷子", "14:00, ");
