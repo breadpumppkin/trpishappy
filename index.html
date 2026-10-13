@@ -12,7 +12,7 @@
             --text-muted: #718096;
             --shadow-card: 0 15px 35px rgba(0, 0, 0, 0.06), 0 5px 15px rgba(0, 0, 0, 0.04);
             --primary-gradient: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%);
-            --custom-item-color: #1a365d; 
+            --custom-item-color: #1a365d; /* 默认兜底颜色 */
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
@@ -180,7 +180,6 @@
             box-shadow: 0 4px 10px rgba(0,0,0,0.15); margin-bottom: 8px;
             display: flex; align-items: center; justify-content: center; font-size: 1rem; font-weight: bold;
         }
-        /* 大站点标题（成都、九寨沟等）字体放大到 1.45rem，非常清晰醒目 */
         .station-title { font-size: 1.45rem; font-weight: 900; text-align: center; text-shadow: 0 2px 4px rgba(0,0,0,0.25); line-height: 1.4; letter-spacing: 1px; }
         .station-icon { font-size: 1.8rem; margin-bottom: 6px; }
 
@@ -198,10 +197,6 @@
         .sub-event-node::before {
             content: ''; position: absolute; left: -14px; top: 50%; transform: translateY(-50%); width: 9px; height: 9px;
             background: #fff; border: 2.5px solid currentColor; border-radius: 50%;
-        }
-
-        .custom-sub-text {
-            color: var(--custom-item-color);
         }
 
         .primary-btn {
@@ -431,6 +426,19 @@
         const AUTHORS = ["林姐", "赵妹", "树林", "狗子", "肥美"];
         const SYNC_KEY = "sichuan_2026_shared_main_v2";
 
+        // 红黄蓝绿青蓝紫粉黑 对应的颜色代码表
+        const COLOR_MAP = {
+            '1': '#e53e3e', // 红
+            '2': '#d69e2e', // 黄
+            '3': '#3182ce', // 蓝
+            '4': '#38a169', // 绿
+            '5': '#00b5d8', // 青
+            '6': '#2b6cb0', // 蓝(深蓝)
+            '7': '#805ad5', // 紫
+            '8': '#d53369', // 粉
+            '9': '#1a202c'  // 黑
+        };
+
         const defaultMilestones = [
             { date: "9/18", place: "成都", subMilestones: [] },
             { date: "9/19 - 9/21", place: "九寨沟", subMilestones: [] },
@@ -636,16 +644,18 @@
         }
 
         function promptAddSub(mIdx) {
-            const input = prompt("请输入【时间】与【地点】\n格式：时间, 地点\n例如: 下午, 望平街", "下午, ");
+            const input = prompt("请输入【时间】、【地点】和【颜色编号】\n格式：时间, 地点, 颜色编号\n\n颜色代号：\n1.红 2.黄 3.蓝 4.绿 5.青 6.深蓝 7.紫 8.粉 9.黑\n例如: 下午, 望平街, 1", "下午, , 1");
             if (input === null) return;
             const parts = input.split(/[,，]/);
             const timeVal = parts[0] ? parts[0].trim() : "";
             const placeVal = parts[1] ? parts[1].trim() : "";
+            const colorCode = parts[2] ? parts[2].trim() : "1";
+            const chosenColor = COLOR_MAP[colorCode] || '#1a365d';
 
             if (!milestonesDataCache[mIdx].subMilestones) {
                 milestonesDataCache[mIdx].subMilestones = [];
             }
-            milestonesDataCache[mIdx].subMilestones.push({ date: timeVal, place: placeVal, comments: [] });
+            milestonesDataCache[mIdx].subMilestones.push({ date: timeVal, place: placeVal, color: chosenColor, comments: [] });
             markUnsaved();
             renderSketchTimeline();
             saveToCloud();
@@ -655,11 +665,15 @@
             event.stopPropagation();
             const sub = milestonesDataCache[mIdx].subMilestones[sIdx];
             const cleanExistingPlace = (sub.place || '').replace('地点名称', '').trim();
-            const input = prompt("修改【时间】与【地点】\n格式：时间, 地点", `${sub.date || ''}, ${cleanExistingPlace}`);
+            const input = prompt("修改【时间】、【地点】和【颜色编号】\n格式：时间, 地点, 颜色编号\n\n颜色代号：\n1.红 2.黄 3.蓝 4.绿 5.青 6.深蓝 7.紫 8.粉 9.黑", `${sub.date || ''}, ${cleanExistingPlace}, 1`);
             if (input === null) return;
             const parts = input.split(/[,，]/);
             if (parts[0] !== undefined) sub.date = parts[0].trim();
             if (parts[1] !== undefined) sub.place = parts[1].trim().replace('地点名称', '').trim();
+            if (parts[2] !== undefined) {
+                const colorCode = parts[2].trim();
+                if (COLOR_MAP[colorCode]) sub.color = COLOR_MAP[colorCode];
+            }
             markUnsaved();
             renderSketchTimeline();
             saveToCloud();
@@ -716,22 +730,23 @@
 
                 let subNodesHTML = (ms.subMilestones || []).map((sub, sIdx) => {
                     const cleanPlace = (sub.place || '').replace('地点名称', '').trim();
+                    const subColor = sub.color || '#1a365d'; // 如果没设置过颜色则用默认深蓝
                     return `
                     <div class="sub-event-node" draggable="true" 
-                         style="color: var(--custom-item-color);"
+                         style="color: ${subColor};"
                          ondragstart="onDragStart(event, ${mIdx}, ${sIdx})" 
                          ondragend="onDragEnd(event)" 
                          ondragover="onDragOver(event)" 
                          ondrop="onDrop(event, ${mIdx}, ${sIdx})"
                          onclick="openModal(${mIdx}, ${sIdx})">
                         <div style="display:flex; justify-content:space-between; align-items:center; width:100%;">
-                            <span class="custom-sub-text" style="font-size: 1.05rem; font-weight: 900;">📍 ${sub.date || ''} ${cleanPlace}</span>
+                            <span style="font-size: 1.05rem; font-weight: 900; color: ${subColor};">📍 ${sub.date || ''} ${cleanPlace}</span>
                             <div style="display:flex; gap:6px; align-items:center;">
                                 <button onclick="editSubMilestone(${mIdx}, ${sIdx}, event)" style="background:none; border:none; color:#718096; cursor:pointer; font-size:0.8rem; font-weight:bold;" title="修改">✏️</button>
                                 <button onclick="deleteSubMilestone(${mIdx}, ${sIdx}, event)" style="background:none; border:none; color:#e53e3e; cursor:pointer; font-size:1rem; font-weight:bold;" title="删除">×</button>
                             </div>
                         </div>
-                        <button class="detail-btn" style="color: var(--custom-item-color); border-color: var(--custom-item-color); margin-top: 4px;">💬 互动留言 (${(sub.comments || []).length})</button>
+                        <button class="detail-btn" style="color: ${subColor}; border-color: ${subColor}60; margin-top: 4px;">💬 互动留言 (${(sub.comments || []).length})</button>
                     </div>
                 `;}).join('');
 
