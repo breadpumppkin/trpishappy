@@ -59,14 +59,12 @@
 
         .error-tip { color: #e53e3e; font-size: 0.9rem; margin-top: 15px; display: none; font-weight: 600; }
 
-        /* 视图切换容器 */
         .app-view { width: 100%; max-width: 1250px; display: none; }
         .active-view { display: block; }
 
         header { text-align: center; margin-bottom: 20px; padding: 0 10px; }
         header p { color: var(--text-muted); font-size: 1rem; margin-top: 8px; font-weight: 500; }
 
-        /* 主页面大卡片选择区样式 */
         .home-dashboard-grid {
             display: grid;
             grid-template-columns: 1fr;
@@ -128,7 +126,6 @@
         .sichuan-theme .card-enter-btn { background: linear-gradient(135deg, #2e7d32, #4caf50); }
         .plan-theme .card-enter-btn { background: linear-gradient(135deg, #FF6B6B, #FF8E53); }
 
-        /* 返回主页按钮栏 */
         .nav-back-bar {
             display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;
         }
@@ -151,7 +148,6 @@
             display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 12px;
         }
 
-        /* 全局旅行留言墙专区样式 */
         .global-comments-section {
             margin-bottom: 25px; background: #f8fafc; border-radius: 20px; padding: 20px 15px; border: 1.5px solid #e2e8f0;
         }
@@ -457,4 +453,357 @@
         function switchView(viewId) {
             document.querySelectorAll('.app-view').forEach(v => v.classList.remove('active-view'));
             document.getElementById(viewId).classList.add('active-view');
-            window.scrollTo({ top: 0, behavior:
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function getStationTheme(place) {
+            if (place.includes('成都')) {
+                return { gradient: 'linear-gradient(135deg, #1b5e20 0%, #4caf50 100%)', accent: '#2e7d32', icon: '🎋' };
+            } else if (place.includes('九寨沟')) {
+                return { gradient: 'linear-gradient(135deg, #01579b 0%, #00bcd4 100%)', accent: '#00838f', icon: '🏞️' };
+            } else if (place.includes('都江堰')) {
+                return { gradient: 'linear-gradient(135deg, #006064 0%, #26a69a 100%)', accent: '#00897b', icon: '🌊' };
+            } else if (place.includes('乐山')) {
+                return { gradient: 'linear-gradient(135deg, #880e4f 0%, #d81b60 100%)', accent: '#ad1457', icon: '🗿' };
+            } else if (place.includes('重庆')) {
+                return { gradient: 'linear-gradient(135deg, #b71c1c 0%, #ff5722 100%)', accent: '#c62828', icon: '🌶️' };
+            } else {
+                return { gradient: 'linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%)', accent: '#FF6B6B', icon: '✈️' };
+            }
+        }
+
+        function getCurrentDateTime() {
+            const now = new Date();
+            return `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+        }
+
+        async function loadCloudData() {
+            try {
+                const res = await fetch(`${SUPABASE_URL}/rest/v1/trip_posts?person_id=eq.${SYNC_KEY}&select=content_data`, {
+                    headers: { "apikey": SUPABASE_ANON_KEY, "Authorization": `Bearer ${SUPABASE_ANON_KEY}` }
+                });
+                if (!res.ok) return;
+                const data = await res.json();
+
+                if (data?.[0]?.content_data) {
+                    const cData = data[0].content_data;
+                    milestonesDataCache = cData.milestones || JSON.parse(JSON.stringify(defaultMilestones));
+                    globalCommentsCache = cData.globalComments || [];
+                } else {
+                    milestonesDataCache = JSON.parse(JSON.stringify(defaultMilestones));
+                    globalCommentsCache = [];
+                }
+                renderSketchTimeline();
+                renderGlobalComments();
+            } catch (err) { 
+                console.error("加载失败", err); 
+                milestonesDataCache = JSON.parse(JSON.stringify(defaultMilestones));
+                globalCommentsCache = [];
+                renderSketchTimeline();
+                renderGlobalComments();
+            }        
+        }
+
+        function renderGlobalComments() {
+            const container = document.getElementById('global-comments-grid-root');
+            if (!container) return;
+
+            if (globalCommentsCache.length === 0) {
+                container.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 15px; font-size: 0.85rem;">暂无整体旅行留言，点击上方按钮添加第一条吧！</div>`;
+                return;
+            }
+
+            container.innerHTML = globalCommentsCache.map((item, idx) => `
+                <div class="global-comment-mini-card" style="background: ${item.bgColor || '#ffffff'};" onclick="openGlobalCommentModal(${idx})">
+                    <div style="font-size: 0.9rem; font-weight: 700; color: var(--text-main); line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">
+                        "${item.text || '点击写下寄语...'}"
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px; font-size: 0.75rem; color: var(--text-muted); border-top: 1px dashed rgba(0,0,0,0.08); padding-top: 6px;">
+                        <span>📅 ${item.timestamp || ''}</span>
+                        <span style="font-weight: 700; color: #2e7d32;">✍️ ${item.author || '未署名'}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function addNewGlobalComment() {
+            const nowTime = getCurrentDateTime();
+            globalCommentsCache.push({
+                author: AUTHORS[0],
+                timestamp: nowTime,
+                text: "",
+                bgColor: "#ffffff"
+            });
+            renderGlobalComments();
+            openGlobalCommentModal(globalCommentsCache.length - 1);
+        }
+
+        function openGlobalCommentModal(idx) {
+            currentEditingGlobalIndex = idx;
+            const item = globalCommentsCache[idx];
+
+            const selectEl = document.getElementById('gc-author-select');
+            selectEl.innerHTML = AUTHORS.map(name => `<option value="${name}" ${item.author === name ? 'selected' : ''}>${name}</option>`).join('');
+
+            document.getElementById('gc-text-content').value = item.text || '';
+            document.getElementById('gc-timestamp-display').innerText = `留言时间：${item.timestamp || ''}`;
+
+            document.querySelectorAll('input[name="gc-bg-color"]').forEach(radio => {
+                radio.checked = (radio.value === (item.bgColor || '#ffffff'));
+            });
+
+            document.getElementById('global-comment-modal').style.display = 'flex';
+        }
+
+        function closeGlobalCommentModal() {
+            document.getElementById('global-comment-modal').style.display = 'none';
+            renderGlobalComments();
+        }
+
+        function saveGlobalCommentChanges() {
+            if (currentEditingGlobalIndex === null) return;
+            const item = globalCommentsCache[currentEditingGlobalIndex];
+            item.author = document.getElementById('gc-author-select').value;
+            item.text = document.getElementById('gc-text-content').value;
+            const selectedBg = document.querySelector('input[name="gc-bg-color"]:checked');
+            if (selectedBg) item.bgColor = selectedBg.value;
+            
+            closeGlobalCommentModal();
+            renderGlobalComments();
+            saveToCloud();
+        }
+
+        function deleteGlobalComment() {
+            if (currentEditingGlobalIndex === null) return;
+            if (confirm("确定要删除这条整体旅行留言吗？")) {
+                globalCommentsCache.splice(currentEditingGlobalIndex, 1);
+                closeGlobalCommentModal();
+                renderGlobalComments();
+                saveToCloud();
+            }
+        }
+
+        function promptAddSub(mIdx) {
+            const input = prompt("请输入【时间】与【地点】\n格式：时间, 地点\n例如: 下午, 望平街", "下午, ");
+            if (input === null) return;
+            const parts = input.split(/[,，]/);
+            const timeVal = parts[0] ? parts[0].trim() : "时间";
+            const placeVal = parts[1] ? parts[1].trim() : "地点名称";
+
+            if (!milestonesDataCache[mIdx].subMilestones) {
+                milestonesDataCache[mIdx].subMilestones = [];
+            }
+            milestonesDataCache[mIdx].subMilestones.push({ date: timeVal, place: placeVal, comments: [] });
+            renderSketchTimeline();
+        }
+
+        function editSubMilestone(mIdx, sIdx, event) {
+            event.stopPropagation();
+            const sub = milestonesDataCache[mIdx].subMilestones[sIdx];
+            const input = prompt("修改【时间】与【地点】\n格式：时间, 地点", `${sub.date || ''}, ${sub.place || ''}`);
+            if (input === null) return;
+            const parts = input.split(/[,，]/);
+            if (parts[0] !== undefined) sub.date = parts[0].trim();
+            if (parts[1] !== undefined) sub.place = parts[1].trim();
+            renderSketchTimeline();
+        }
+
+        function deleteSubMilestone(mIdx, sIdx, event) {
+            event.stopPropagation();
+            if (confirm("确定要删除这个小时间点吗？")) {
+                milestonesDataCache[mIdx].subMilestones.splice(sIdx, 1);
+                renderSketchTimeline();
+            }
+        }
+
+        function onDragStart(e, mIdx, sIdx) {
+            draggedSubItem = { mIdx, sIdx };
+            e.dataTransfer.effectAllowed = 'move';
+            e.currentTarget.classList.add('dragging');
+        }
+
+        function onDragEnd(e) {
+            e.currentTarget.classList.remove('dragging');
+            draggedSubItem = null;
+        }
+
+        function onDragOver(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+        }
+
+        function onDrop(e, targetMIdx, targetSIdx) {
+            e.preventDefault();
+            if (!draggedSubItem) return;
+            const sourceMIdx = draggedSubItem.mIdx;
+            const sourceSIdx = draggedSubItem.sIdx;
+            if (sourceMIdx !== targetMIdx) return;
+            const list = milestonesDataCache[targetMIdx].subMilestones;
+            const [movedItem] = list.splice(sourceSIdx, 1);
+            list.splice(targetSIdx, 0, movedItem);
+            renderSketchTimeline();
+        }
+
+        function renderSketchTimeline() {
+            const container = document.getElementById('sketch-timeline-root');
+            container.innerHTML = '';
+
+            milestonesDataCache.forEach((ms, mIdx) => {
+                const theme = getStationTheme(ms.place || '');
+                const col = document.createElement('div');
+                col.className = 'station-column';
+
+                let subNodesHTML = (ms.subMilestones || []).map((sub, sIdx) => `
+                    <div class="sub-event-node" draggable="true" 
+                         style="color: ${theme.accent};"
+                         ondragstart="onDragStart(event, ${mIdx}, ${sIdx})" 
+                         ondragend="onDragEnd(event)" 
+                         ondragover="onDragOver(event)" 
+                         ondrop="onDrop(event, ${mIdx}, ${sIdx})"
+                         onclick="openModal(${mIdx}, ${sIdx})">
+                        <div style="display:flex; justify-content:space-between; align-items:center; width:100%;">
+                            <span style="font-size: 1.05rem; font-weight: 900; color: var(--text-main);">📍 ${sub.date || ''} ${sub.place || ''}</span>
+                            <div style="display:flex; gap:6px; align-items:center;">
+                                <button onclick="editSubMilestone(${mIdx}, ${sIdx}, event)" style="background:none; border:none; color:#718096; cursor:pointer; font-size:0.8rem; font-weight:bold;" title="修改">✏️</button>
+                                <button onclick="deleteSubMilestone(${mIdx}, ${sIdx}, event)" style="background:none; border:none; color:#e53e3e; cursor:pointer; font-size:1rem; font-weight:bold;" title="删除">×</button>
+                            </div>
+                        </div>
+                        <button class="detail-btn" style="color: ${theme.accent}; border-color: ${theme.accent}40; margin-top: 4px;">💬 互动留言 (${(sub.comments || []).length})</button>
+                    </div>
+                `).join('');
+
+                col.innerHTML = `
+                    <div class="station-node-header" style="background: ${theme.gradient};">
+                        <div class="station-icon">${theme.icon}</div>
+                        <div class="station-dot" style="color: ${theme.accent};">${mIdx + 1}</div>
+                        <div class="station-title">${ms.date || ''}<br>${ms.place || ''}</div>
+                    </div>
+                    <div class="vertical-wave-branch">
+                        <svg class="vertical-wave-svg" preserveAspectRatio="none" viewBox="0 0 40 300">
+                            <path d="M 20 0 Q 0 75, 20 150 T 20 300" fill="none" stroke="${theme.accent}" stroke-dasharray="5,5" stroke-width="2.5"/>
+                        </svg>
+                        ${subNodesHTML}
+                        <button class="add-sub-inline-btn" style="color: ${theme.accent}; border-color: ${theme.accent};" onclick="promptAddSub(${mIdx})">➕ 添加时间与地点</button>
+                    </div>
+                `;
+                container.appendChild(col);
+            });
+        }
+
+        function openModal(mIdx, sIdx) {
+            currentEditingMIdx = mIdx;
+            currentEditingSIdx = sIdx;
+            const sub = milestonesDataCache[mIdx].subMilestones[sIdx];
+            document.getElementById('modal-title').innerText = `📍 ${sub.date || ''} ${sub.place || ''} - 互动留言`;
+            renderModalContent();
+            document.getElementById('detail-modal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('detail-modal').style.display = 'none';
+            renderSketchTimeline();
+        }
+
+        function renderModalContent() {
+            const sub = milestonesDataCache[currentEditingMIdx].subMilestones[currentEditingSIdx];
+            const commentContainer = document.getElementById('modal-comments-container');
+            const reactionLabels = ['👍 点赞', '😆 大笑', '🤝 同意', '😲 吃惊'];
+
+            commentContainer.innerHTML = (sub.comments || []).map((comm, cIdx) => `
+                <div class="comment-card">
+                    <div class="comment-header">
+                        <div style="display: flex; gap: 6px; align-items: center; flex-wrap: wrap;">
+                            <span style="font-size: 0.75rem; font-weight: 700; color: var(--text-muted);">发言人：</span>
+                            <select class="author-select" onchange="updateModalCommentField(${cIdx}, 'author', this.value)">
+                                <option value="">选择您的名字</option>
+                                ${AUTHORS.map(name => `<option value="${name}" ${comm.author === name ? 'selected' : ''}>${name}</option>`).join('')}
+                            </select>
+                            <span style="font-size: 0.7rem; color: var(--text-muted);">⏱️ ${comm.timestamp || ''}</span>
+                        </div>
+                        <button class="detail-btn" onclick="deleteModalComment(${cIdx})" style="padding:2px 6px; font-size:0.7rem; background:#fff5f5; color:#e53e3e; border-color:#fed7d7; width:auto;">×</button>
+                    </div>
+                    <textarea oninput="updateModalCommentField(${cIdx}, 'text', this.value)" placeholder="写下您的感想、评价...">${comm.text || ''}</textarea>
+                    <div class="comment-footer">
+                        <div class="reaction-bar">
+                            ${reactionLabels.map((label, rIdx) => `
+                                <button class="reaction-btn ${comm.reactions?.[rIdx]?.active ? 'active' : ''}" onclick="toggleModalReaction(${cIdx},${rIdx})">
+                                    ${label} <span class="count">${comm.reactions?.[rIdx]?.count || 0}</span>
+                                </button>
+                            `).join('')}
+                        </div>
+                        <div style="font-size: 0.7rem; color: var(--text-muted);">署名: <b>${comm.author || '未署名'}</b></div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function addModalComment() {
+            const sub = milestonesDataCache[currentEditingMIdx].subMilestones[currentEditingSIdx];
+            if (!sub.comments) sub.comments = [];
+            sub.comments.push({
+                author: "", timestamp: getCurrentDateTime(), text: "",
+                reactions: Array(4).fill().map(() => ({ count: 0, active: false }))
+            });
+            renderModalContent();
+        }
+
+        function deleteModalComment(cIdx) {
+            const sub = milestonesDataCache[currentEditingMIdx].subMilestones[currentEditingSIdx];
+            sub.comments.splice(cIdx, 1);
+            renderModalContent();
+        }
+
+        function updateModalCommentField(cIdx, field, val) {
+            const sub = milestonesDataCache[currentEditingMIdx].subMilestones[currentEditingSIdx];
+            if (sub?.comments?.[cIdx]) {
+                sub.comments[cIdx][field] = val;
+            }
+        }
+
+        function toggleModalReaction(cIdx, rIdx) {
+            const sub = milestonesDataCache[currentEditingMIdx].subMilestones[currentEditingSIdx];
+            const rec = sub.comments[cIdx].reactions[rIdx];
+            rec.active = !rec.active;
+            rec.count = rec.active ? rec.count + 1 : Math.max(0, rec.count - 1);
+            renderModalContent();
+        }
+
+        // 升级版：采用标准的 UPSERT 写入云端，避免 DELETE 权限冲突导致的保存失败
+        async function saveToCloud() {
+            try {
+                const res = await fetch(`${SUPABASE_URL}/rest/v1/trip_posts`, {
+                    method: "POST",
+                    headers: {
+                        "apikey": SUPABASE_ANON_KEY,
+                        "Authorization": `Bearer ${SUPABASE_ANON_KEY}`,
+                        "Content-Type": "application/json",
+                        "Prefer": "resolution=merge-duplicates"
+                    },
+                    body: JSON.stringify({ 
+                        person_id: SYNC_KEY, 
+                        content_data: { 
+                            milestones: milestonesDataCache,
+                            globalComments: globalCommentsCache 
+                        } 
+                    })
+                });
+
+                if (res.ok) {
+                    const tip = document.getElementById('global-save-tip');
+                    if(tip) {
+                        tip.style.opacity = '1';
+                        setTimeout(() => { tip.style.opacity = '0'; }, 2500);
+                    }
+                } else {
+                    const errText = await res.text();
+                    console.error("保存失败详情:", errText);
+                    alert("保存失败，请检查控制台错误信息。");
+                }
+            } catch (err) {
+                console.error("保存异常", err);
+                alert("保存发生异常。");
+            }
+        }
+    </script>
+</body>
+</html>
