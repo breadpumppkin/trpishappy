@@ -587,14 +587,15 @@
             const input = prompt("请输入【时间】与【地点】\n格式：时间, 地点\n例如: 下午, 望平街", "下午, ");
             if (input === null) return;
             const parts = input.split(/[,，]/);
-            const timeVal = parts[0] ? parts[0].trim() : "时间";
-            const placeVal = parts[1] ? parts[1].trim() : "地点名称";
+            const timeVal = parts[0] ? parts[0].trim() : "";
+            const placeVal = parts[1] ? parts[1].trim() : "";
 
             if (!milestonesDataCache[mIdx].subMilestones) {
                 milestonesDataCache[mIdx].subMilestones = [];
             }
             milestonesDataCache[mIdx].subMilestones.push({ date: timeVal, place: placeVal, comments: [] });
             renderSketchTimeline();
+            saveToCloud();
         }
 
         function editSubMilestone(mIdx, sIdx, event) {
@@ -606,6 +607,7 @@
             if (parts[0] !== undefined) sub.date = parts[0].trim();
             if (parts[1] !== undefined) sub.place = parts[1].trim();
             renderSketchTimeline();
+            saveToCloud();
         }
 
         function deleteSubMilestone(mIdx, sIdx, event) {
@@ -613,6 +615,7 @@
             if (confirm("确定要删除这个小时间点吗？")) {
                 milestonesDataCache[mIdx].subMilestones.splice(sIdx, 1);
                 renderSketchTimeline();
+                saveToCloud();
             }
         }
 
@@ -642,6 +645,7 @@
             const [movedItem] = list.splice(sourceSIdx, 1);
             list.splice(targetSIdx, 0, movedItem);
             renderSketchTimeline();
+            saveToCloud();
         }
 
         function renderSketchTimeline() {
@@ -768,7 +772,6 @@
             renderModalContent();
         }
 
-        // 升级版：采用标准的 UPSERT 写入云端，避免 DELETE 权限冲突导致的保存失败
         async function saveToCloud() {
             try {
                 const res = await fetch(`${SUPABASE_URL}/rest/v1/trip_posts`, {
