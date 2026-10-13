@@ -453,7 +453,7 @@
         const SUPABASE_ANON_KEY = "sb_publishable_1eGLF31m-1KAyCJp2DEwGg_7mqCLlRQ";
         const CORRECT_PASSWORD = "0815";
         const AUTHORS = ["林姐", "赵妹", "树林", "狗子", "肥美"];
-        const SYNC_KEY = "sichuan_2026_shared_main_v2"; // 升级了版本Key，确保能直接加载全新的独立重庆天数
+        const SYNC_KEY = "sichuan_2026_shared_main_v2"; // 保持v2以安全读取您之前写的所有数据
 
         // 颜色配置
         const AVAILABLE_COLORS = [
@@ -471,18 +471,6 @@
         let activeActionType = 'add'; 
         let targetStationIdx = null;
         let targetSubIdx = null;
-
-        // 重庆已按天独立拆分
-        const defaultMilestones = [
-            { date: "9/18", place: "成都", subMilestones: [] },
-            { date: "9/19 - 9/21", place: "九寨沟", subMilestones: [] },
-            { date: "9/21 - 9/22", place: "成都", subMilestones: [] },
-            { date: "9/23", place: "都江堰", subMilestones: [] },
-            { date: "9/24", place: "乐山", subMilestones: [] },
-            { date: "9/25", place: "重庆", subMilestones: [] },
-            { date: "9/26", place: "重庆", subMilestones: [] },
-            { date: "9/27", place: "重庆", subMilestones: [] }
-        ];
 
         let milestonesDataCache = [];
         let globalCommentsCache = [];
@@ -595,22 +583,69 @@
 
                 if (data?.[0]?.content_data) {
                     const cData = data[0].content_data;
-                    milestonesDataCache = cData.milestones || JSON.parse(JSON.stringify(defaultMilestones));
+                    milestonesDataCache = cData.milestones || [];
                     globalCommentsCache = cData.globalComments || [];
                 } else {
-                    milestonesDataCache = JSON.parse(JSON.stringify(defaultMilestones));
-                    globalCommentsCache = [];
+                    milestonesDataCache = [];
                 }
+
+                // 智能自动处理：检查如果云端还是旧的合并重庆，则自动把它拆成 9/25, 9/26, 9/27 三天，并保留原有内容！
+                migrateChongqingDays();
+
                 clearUnsaved();
                 renderSketchTimeline();
                 renderGlobalComments();
             } catch (err) { 
                 console.error("加载失败", err); 
-                milestonesDataCache = JSON.parse(JSON.stringify(defaultMilestones));
+                milestonesDataCache = [];
                 globalCommentsCache = [];
+                migrateChongqingDays();
                 renderSketchTimeline();
                 renderGlobalComments();
             }        
+        }
+
+        // 智能拆分重庆并保留用户数据的函数
+        function migrateChongqingDays() {
+            if (!milestonesDataCache || milestonesDataCache.length === 0) {
+                // 如果完全没有数据，初始化默认结构
+                milestonesDataCache = [
+                    { date: "9/18", place: "成都", subMilestones: [] },
+                    { date: "9/19 - 9/21", place: "九寨沟", subMilestones: [] },
+                    { date: "9/21 - 9/22", place: "成都", subMilestones: [] },
+                    { date: "9/23", place: "都江堰", subMilestones: [] },
+                    { date: "9/24", place: "乐山", subMilestones: [] },
+                    { date: "9/25", place: "重庆", subMilestones: [] },
+                    { date: "9/26", place: "重庆", subMilestones: [] },
+                    { date: "9/27", place: "重庆", subMilestones: [] }
+                ];
+                return;
+            }
+
+            // 查找现有的重庆站点
+            const chongqingIndex = milestonesDataCache.findIndex(m => m.place && m.place.includes('重庆'));
+            if (chongqingIndex !== -1) {
+                const cqNode = milestonesDataCache[chongqingIndex];
+                // 如果它还是旧的 "9/25 - 9/27" 合并形态
+                if (cqNode.date && cqNode.date.includes(' - ')) {
+                    const existingSubs = cqNode.subMilestones || [];
+                    // 替换成三天的独立站点，把原有的子内容/留言统一放到 9/25 重庆里，防止丢失
+                    const newCqDays = [
+                        { date: "9/25", place: "重庆", subMilestones: existingSubs },
+                        { date: "9/26", place: "重庆", subMilestones: [] },
+                        { date: "9/27", place: "重庆", subMilestones: [] }
+                    ];
+                    milestonesDataCache.splice(chongqingIndex, 1, ...newCqDays);
+                    markUnsaved(); // 标记需要保存，自动同步到云端
+                }
+            } else {
+                // 如果压根没有重庆，补全这三天
+                milestonesDataCache.push(
+                    { date: "9/25", place: "重庆", subMilestones: [] },
+                    { date: "9/26", place: "重庆", subMilestones: [] },
+                    { date: "9/27", place: "重庆", subMilestones: [] }
+                );
+            }
         }
 
         function renderGlobalComments() {
