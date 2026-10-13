@@ -12,7 +12,6 @@
             --text-muted: #718096;
             --shadow-card: 0 15px 35px rgba(0, 0, 0, 0.06), 0 5px 15px rgba(0, 0, 0, 0.04);
             --primary-gradient: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%);
-            --custom-item-color: #1a365d; /* 默认兜底颜色 */
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
@@ -216,13 +215,13 @@
             font-size: 0.8rem; font-weight: bold; cursor: pointer; width: 100%; text-align: center; z-index: 2; margin-top: 5px;
         }
 
-        #detail-modal, #global-comment-modal {
+        #detail-modal, #global-comment-modal, #add-sub-modal {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(15, 23, 42, 0.65); backdrop-filter: blur(10px);
             display: none; justify-content: center; align-items: center; z-index: 9999; padding: 15px;
         }
         .modal-content-box {
-            background: #fff; width: 100%; max-width: 600px; border-radius: 20px; padding: 20px;
+            background: #fff; width: 100%; max-width: 480px; border-radius: 20px; padding: 20px;
             box-shadow: 0 25px 60px rgba(0,0,0,0.3); max-height: 90vh; overflow-y: auto; -webkit-overflow-scrolling: touch;
         }
         @media(min-width: 768px) { .modal-content-box { padding: 30px; border-radius: 24px; } }
@@ -271,6 +270,37 @@
             <input type="password" id="password-input" maxlength="4" placeholder="••••">
             <button onclick="checkPassword()">开启回忆空间</button>
             <div id="error-msg" class="error-tip">密码不正确，请重新输入</div>
+        </div>
+    </div>
+
+    <!-- 弹窗：添加/修改小时间点（支持红黄蓝绿青蓝紫粉黑点选） -->
+    <div id="add-sub-modal">
+        <div class="modal-content-box">
+            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid #edf2f7; padding-bottom:10px; margin-bottom:15px;">
+                <h3 id="add-modal-heading" style="font-size: 1.15rem; font-weight: 900; color: var(--text-main);">➕ 添加新时间与地点</h3>
+                <button class="detail-btn" onclick="closeAddSubModal()" style="background:#fff5f5; color:#e53e3e; border-color:#fed7d7; width:auto; padding:4px 10px;">关闭 ×</button>
+            </div>
+            
+            <div style="display: flex; flex-direction: column; gap: 14px;">
+                <div>
+                    <label style="font-size: 0.85rem; font-weight: 700; color: var(--text-muted); display: block; margin-bottom: 5px;">时间（如：下午、14:00）：</label>
+                    <input type="text" id="sub-time-input" style="width:100%; padding:10px; border:1.5px solid #cbd5e0; border-radius:8px; font-size:0.95rem; outline:none;" placeholder="请输入时间">
+                </div>
+
+                <div>
+                    <label style="font-size: 0.85rem; font-weight: 700; color: var(--text-muted); display: block; margin-bottom: 5px;">地点（如：望平街、春熙路）：</label>
+                    <input type="text" id="sub-place-input" style="width:100%; padding:10px; border:1.5px solid #cbd5e0; border-radius:8px; font-size:0.95rem; outline:none;" placeholder="请输入地点">
+                </div>
+
+                <div>
+                    <label style="font-size: 0.85rem; font-weight: 700; color: var(--text-muted); display: block; margin-bottom: 8px;">选择字体颜色（红黄蓝绿青蓝紫粉黑）：</label>
+                    <div style="display: flex; gap: 8px; flex-wrap: wrap;" id="color-picker-container">
+                        <!-- 色彩按钮由JS动态生成 -->
+                    </div>
+                </div>
+
+                <button class="primary-btn" style="width:100%; margin-top:10px;" onclick="confirmAddSubItem()">确定保存</button>
+            </div>
         </div>
     </div>
 
@@ -426,18 +456,22 @@
         const AUTHORS = ["林姐", "赵妹", "树林", "狗子", "肥美"];
         const SYNC_KEY = "sichuan_2026_shared_main_v2";
 
-        // 红黄蓝绿青蓝紫粉黑 对应的颜色代码表
-        const COLOR_MAP = {
-            '1': '#e53e3e', // 红
-            '2': '#d69e2e', // 黄
-            '3': '#3182ce', // 蓝
-            '4': '#38a169', // 绿
-            '5': '#00b5d8', // 青
-            '6': '#2b6cb0', // 蓝(深蓝)
-            '7': '#805ad5', // 紫
-            '8': '#d53369', // 粉
-            '9': '#1a202c'  // 黑
-        };
+        // 红黄蓝绿青蓝紫粉黑 颜色配置
+        const AVAILABLE_COLORS = [
+            { name: "红", value: "#e53e3e" },
+            { name: "黄", value: "#d69e2e" },
+            { name: "蓝", value: "#3182ce" },
+            { name: "绿", value: "#38a169" },
+            { name: "青", value: "#00b5d8" },
+            { name: "紫", value: "#805ad5" },
+            { name: "粉", value: "#d53369" },
+            { name: "黑", value: "#1a202c" }
+        ];
+
+        let selectedColorHex = "#3182ce"; // 默认选中蓝色
+        let activeActionType = 'add'; // 'add' 或 'edit'
+        let targetStationIdx = null;
+        let targetSubIdx = null;
 
         const defaultMilestones = [
             { date: "9/18", place: "成都", subMilestones: [] },
@@ -461,9 +495,26 @@
                 document.getElementById("auth-overlay").style.display = "none";
                 document.getElementById("main-app").style.display = "flex";
                 loadCloudData();
+                initColorPickerUI();
             } else {
                 document.getElementById("error-msg").style.display = "block";
             }
+        }
+
+        function initColorPickerUI() {
+            const container = document.getElementById('color-picker-container');
+            container.innerHTML = AVAILABLE_COLORS.map(c => `
+                <div class="color-swatch" onclick="selectColor('${c.value}', this)" style="background: ${c.value}; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; color: white; font-size: 0.75rem; font-weight: bold; border: 3px solid transparent; box-shadow: 0 2px 5px rgba(0,0,0,0.15);" title="${c.name}"></div>
+            `).join('');
+            // 默认选中第一个颜色
+            const firstSwatch = container.querySelector('.color-swatch');
+            if (firstSwatch) selectColor(AVAILABLE_COLORS[0].value, firstSwatch);
+        }
+
+        function selectColor(hex, el) {
+            selectedColorHex = hex;
+            document.querySelectorAll('.color-swatch').forEach(s => s.style.borderColor = 'transparent');
+            el.style.borderColor = '#2d3748';
         }
 
         document.getElementById("password-input").addEventListener("keypress", (e) => {
@@ -643,38 +694,62 @@
             }
         }
 
+        // 打开添加弹窗
         function promptAddSub(mIdx) {
-            const input = prompt("请输入【时间】、【地点】和【颜色编号】\n格式：时间, 地点, 颜色编号\n\n颜色代号：\n1.红 2.黄 3.蓝 4.绿 5.青 6.深蓝 7.紫 8.粉 9.黑\n例如: 下午, 望平街, 1", "下午, , 1");
-            if (input === null) return;
-            const parts = input.split(/[,，]/);
-            const timeVal = parts[0] ? parts[0].trim() : "";
-            const placeVal = parts[1] ? parts[1].trim() : "";
-            const colorCode = parts[2] ? parts[2].trim() : "1";
-            const chosenColor = COLOR_MAP[colorCode] || '#1a365d';
-
-            if (!milestonesDataCache[mIdx].subMilestones) {
-                milestonesDataCache[mIdx].subMilestones = [];
-            }
-            milestonesDataCache[mIdx].subMilestones.push({ date: timeVal, place: placeVal, color: chosenColor, comments: [] });
-            markUnsaved();
-            renderSketchTimeline();
-            saveToCloud();
+            activeActionType = 'add';
+            targetStationIdx = mIdx;
+            document.getElementById('add-modal-heading').innerText = "➕ 添加新时间与地点";
+            document.getElementById('sub-time-input').value = "下午";
+            document.getElementById('sub-place-input').value = "";
+            document.getElementById('add-sub-modal').style.display = 'flex';
         }
 
+        // 打开修改弹窗
         function editSubMilestone(mIdx, sIdx, event) {
             event.stopPropagation();
+            activeActionType = 'edit';
+            targetStationIdx = mIdx;
+            targetSubIdx = sIdx;
             const sub = milestonesDataCache[mIdx].subMilestones[sIdx];
             const cleanExistingPlace = (sub.place || '').replace('地点名称', '').trim();
-            const input = prompt("修改【时间】、【地点】和【颜色编号】\n格式：时间, 地点, 颜色编号\n\n颜色代号：\n1.红 2.黄 3.蓝 4.绿 5.青 6.深蓝 7.紫 8.粉 9.黑", `${sub.date || ''}, ${cleanExistingPlace}, 1`);
-            if (input === null) return;
-            const parts = input.split(/[,，]/);
-            if (parts[0] !== undefined) sub.date = parts[0].trim();
-            if (parts[1] !== undefined) sub.place = parts[1].trim().replace('地点名称', '').trim();
-            if (parts[2] !== undefined) {
-                const colorCode = parts[2].trim();
-                if (COLOR_MAP[colorCode]) sub.color = COLOR_MAP[colorCode];
+            
+            document.getElementById('add-modal-heading').innerText = "✏️ 修改时间与地点";
+            document.getElementById('sub-time-input').value = sub.date || '';
+            document.getElementById('sub-place-input').value = cleanExistingPlace;
+            if (sub.color) selectedColorHex = sub.color;
+            
+            document.getElementById('add-sub-modal').style.display = 'flex';
+        }
+
+        function closeAddSubModal() {
+            document.getElementById('add-sub-modal').style.display = 'none';
+        }
+
+        // 确定保存添加/修改
+        function confirmAddSubItem() {
+            const timeVal = document.getElementById('sub-time-input').value.trim();
+            const placeVal = document.getElementById('sub-place-input').value.trim();
+
+            if (!milestonesDataCache[targetStationIdx].subMilestones) {
+                milestonesDataCache[targetStationIdx].subMilestones = [];
             }
+
+            if (activeActionType === 'add') {
+                milestonesDataCache[targetStationIdx].subMilestones.push({
+                    date: timeVal,
+                    place: placeVal,
+                    color: selectedColorHex,
+                    comments: []
+                });
+            } else {
+                const sub = milestonesDataCache[targetStationIdx].subMilestones[targetSubIdx];
+                sub.date = timeVal;
+                sub.place = placeVal;
+                sub.color = selectedColorHex;
+            }
+
             markUnsaved();
+            closeAddSubModal();
             renderSketchTimeline();
             saveToCloud();
         }
@@ -730,7 +805,7 @@
 
                 let subNodesHTML = (ms.subMilestones || []).map((sub, sIdx) => {
                     const cleanPlace = (sub.place || '').replace('地点名称', '').trim();
-                    const subColor = sub.color || '#1a365d'; // 如果没设置过颜色则用默认深蓝
+                    const subColor = sub.color || '#3182ce'; 
                     return `
                     <div class="sub-event-node" draggable="true" 
                          style="color: ${subColor};"
