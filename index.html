@@ -139,29 +139,6 @@
             box-shadow: 0 2px 8px rgba(0,0,0,0.04); font-size: 0.9rem;
         }
 
-        /* 顶部波浪游动照片动效区 */
-        .wave-floating-banner {
-            width: 100%; max-width: 650px; height: 110px; position: relative;
-            display: flex; justify-content: center; align-items: center; margin: 10px auto 20px auto; pointer-events: none;
-        }
-        .floating-photo-wrapper {
-            position: absolute; width: 105px; height: 105px; border-radius: 50%;
-            border: 4px solid #fff; box-shadow: 0 10px 30px rgba(255, 107, 107, 0.45);
-            overflow: hidden; background: #fff; cursor: pointer; pointer-events: auto;
-            animation: waveMotion 9s ease-in-out infinite alternate;
-        }
-        .floating-photo-wrapper img { width: 100%; height: 100%; object-fit: cover; }
-        .floating-tip {
-            position: absolute; bottom: -20px; font-size: 0.75rem; color: #2d3748; font-weight: 700;
-            background: rgba(255,255,255,0.9); padding: 2px 8px; border-radius: 10px; white-space: nowrap; box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-        }
-
-        @keyframes waveMotion {
-            0% { transform: translateX(-100px) translateY(0px) rotate(-4deg); }
-            50% { transform: translateX(0px) translateY(-10px) rotate(0deg); }
-            100% { transform: translateX(100px) translateY(0px) rotate(4deg); }
-        }
-
         .panel-box {
             background: var(--card-bg); border-radius: 20px; padding: 20px 15px;
             box-shadow: var(--shadow-card); border: 1px solid rgba(255,255,255,0.8); margin-bottom: 25px;
@@ -253,25 +230,6 @@
         }
         @media(min-width: 768px) { .modal-content-box { padding: 30px; border-radius: 24px; } }
 
-        .photo-section {
-            background: #f8fafc; border: 1.5px dashed #cbd5e0; border-radius: 14px;
-            padding: 12px; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
-        }
-        .upload-btn {
-            background: #edf2f7; color: #4a5568; padding: 10px 14px; border-radius: 10px;
-            font-size: 0.9rem; cursor: pointer; border: 1.5px dashed #a0aec0; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; width: 100%; justify-content: center;
-        }
-        @media(min-width: 768px) { .upload-btn { width: auto; } }
-        .hidden-file-input { display: none; }
-        .photo-preview-container { display: flex; gap: 8px; flex-wrap: wrap; }
-        .thumb-wrapper { position: relative; width: 70px; height: 70px; }
-        .thumb { width: 100%; height: 100%; object-fit: cover; border-radius: 10px; border: 2px solid #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
-        .delete-img-btn {
-            position: absolute; top: -6px; right: -6px; background: #e53e3e; color: white;
-            border: none; width: 22px; height: 22px; border-radius: 50%; font-size: 13px;
-            font-weight: bold; display: flex; justify-content: center; align-items: center; cursor: pointer;
-        }
-
         .comment-card {
             background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 12px;
             padding: 12px; margin-bottom: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.02);
@@ -315,16 +273,12 @@
         </div>
     </div>
 
-    <!-- 弹窗：小时间点照片与留言 -->
+    <!-- 弹窗：小时间点留言（已去除照片功能） -->
     <div id="detail-modal">
         <div class="modal-content-box">
             <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid #edf2f7; padding-bottom:10px; margin-bottom:15px;">
-                <h3 id="modal-title" style="font-size: 1.15rem; font-weight: 900; color: var(--text-main);">📸 照片与留言</h3>
+                <h3 id="modal-title" style="font-size: 1.15rem; font-weight: 900; color: var(--text-main);">💬 站点详细讨论</h3>
                 <button class="detail-btn" onclick="closeModal()" style="background:#fff5f5; color:#e53e3e; border-color:#fed7d7; width:auto; padding:4px 10px;">关闭 ×</button>
-            </div>
-            <div class="photo-section">
-                <label class="upload-btn">➕ 上传现场照片<input type="file" class="hidden-file-input" accept="image/*" onchange="handleModalImageUpload(this)"></label>
-                <div class="photo-preview-container" id="modal-photo-preview"></div>
             </div>
             <div>
                 <div style="font-size: 0.85rem; font-weight: 700; color: var(--text-muted); margin-bottom: 8px;">💬 5人专属评价与互动墙：</div>
@@ -412,14 +366,6 @@
                     <span id="global-save-tip" class="save-tip">✓ 云端已同步！</span>
                 </div>
                 <h1 class="neon-flash-title" style="font-size: 1.8rem;">🐼 2026 四川全景足迹</h1>
-                
-                <div class="wave-floating-banner">
-                    <div class="floating-photo-wrapper" id="floating-banner-photo" onclick="document.getElementById('banner-file-input').click()" title="点击更换照片">
-                        <img id="banner-img-element" src="https://images.unsplash.com/photo-1506744038136-46273834b3fb" alt="旅途风光">
-                        <input type="file" id="banner-file-input" class="hidden-file-input" accept="image/*" onchange="handleBannerPhotoUpload(this)">
-                        <div class="floating-tip">✨ 点击换图</div>
-                    </div>
-                </div>
             </header>
 
             <div class="global-comments-section">
@@ -437,7 +383,7 @@
                 <div class="panel-header-row">
                     <div>
                         <h2 style="font-size: 1.25rem; font-weight: 800; color: var(--text-main);">🌊 足迹</h2>
-                        <p style="color: var(--text-muted); font-size: 0.8rem; margin-top: 2px;">左右滑动查看各大站，点击小卡片展开照片与留言</p>
+                        <p style="color: var(--text-muted); font-size: 0.8rem; margin-top: 2px;">左右滑动查看各大站，点击小卡片展开留言</p>
                     </div>
                     <div>
                         <button class="primary-btn" style="font-size: 0.9rem; padding: 10px 16px;" onclick="saveToCloud()">💾 保存修改</button>
@@ -476,7 +422,7 @@
         const SUPABASE_ANON_KEY = "sb_publishable_1eGLF31m-1KAyCJp2DEwGg_7mqCLlRQ";
         const CORRECT_PASSWORD = "0815";
         const AUTHORS = ["林姐", "赵妹", "树林", "狗子", "肥美"];
-        const SYNC_KEY = "sichuan_2026_shared_main_v2"; // 采用新key避开潜在冲突
+        const SYNC_KEY = "sichuan_2026_shared_main_v2";
 
         const defaultMilestones = [
             { date: "9/18", place: "成都", subMilestones: [] },
@@ -535,17 +481,6 @@
             return `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
         }
 
-        function handleBannerPhotoUpload(input) {
-            if (input.files && input.files[0]) {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    document.getElementById('banner-img-element').src = e.target.result;
-                };
-                reader.readAsDataURL(input.files[0]);
-            }
-        }
-
-        // 云端加载数据（使用标准的 GET 查询）
         async function loadCloudData() {
             try {
                 const res = await fetch(`${SUPABASE_URL}/rest/v1/trip_posts?person_id=eq.${SYNC_KEY}&select=content_data`, {
@@ -553,15 +488,10 @@
                 });
                 if (!res.ok) return;
                 const data = await res.json();
-                
-                // 打印看看从云端真正读到了什么
-                console.log("从云端加载的原始数据:", data);
 
                 if (data?.[0]?.content_data) {
                     const cData = data[0].content_data;
                     milestonesDataCache = cData.milestones || JSON.parse(JSON.stringify(defaultMilestones));
-                    
-                    // 确保云端读出来的 globalComments 正常赋值
                     globalCommentsCache = cData.globalComments || [];
                 } else {
                     milestonesDataCache = JSON.parse(JSON.stringify(defaultMilestones));
@@ -578,7 +508,6 @@
             }        
         }
 
-        // 全局旅行留言墙逻辑
         function renderGlobalComments() {
             const container = document.getElementById('global-comments-grid-root');
             if (!container) return;
@@ -644,21 +573,20 @@
             if (selectedBg) item.bgColor = selectedBg.value;
             
             closeGlobalCommentModal();
-            renderGlobalComments(); // 重新渲染页面，防止画面消失
-            saveToCloud();          // 自动同步到云端
+            renderGlobalComments();
+            saveToCloud();
         }
 
-        // 修改后的全体留言删除逻辑（核心修复点）
         function deleteGlobalComment() {
             if (currentEditingGlobalIndex === null) return;
             if (confirm("确定要删除这条整体旅行留言吗？")) {
                 globalCommentsCache.splice(currentEditingGlobalIndex, 1);
                 closeGlobalCommentModal();
-                renderGlobalComments(); // 重新渲染页面，防止画面消失
-                saveToCloud();          // 删除后立即自动保存到云端
+                renderGlobalComments();
+                saveToCloud();
             }
         }
-        // 各站点波浪分支逻辑
+
         function promptAddSub(mIdx) {
             const input = prompt("请输入【时间】与【地点】\n格式：时间, 地点\n例如: 14:00, 宽窄巷子", "14:00, ");
             if (input === null) return;
@@ -669,7 +597,7 @@
             if (!milestonesDataCache[mIdx].subMilestones) {
                 milestonesDataCache[mIdx].subMilestones = [];
             }
-            milestonesDataCache[mIdx].subMilestones.push({ date: timeVal, place: placeVal, images: [], comments: [] });
+            milestonesDataCache[mIdx].subMilestones.push({ date: timeVal, place: placeVal, comments: [] });
             renderSketchTimeline();
         }
 
@@ -745,7 +673,7 @@
                             </div>
                         </div>
                         <div style="font-size: 0.9rem; font-weight: 700; color: var(--text-main);">📍 ${sub.place || '地点名称'}</div>
-                        <button class="detail-btn" style="color: ${theme.accent}; border-color: ${theme.accent}40;">📸 照片 (${(sub.images || []).length}) · 💬 留言 (${(sub.comments || []).length})</button>
+                        <button class="detail-btn" style="color: ${theme.accent}; border-color: ${theme.accent}40;">💬 互动留言 (${(sub.comments || []).length})</button>
                     </div>
                 `).join('');
 
@@ -771,7 +699,7 @@
             currentEditingMIdx = mIdx;
             currentEditingSIdx = sIdx;
             const sub = milestonesDataCache[mIdx].subMilestones[sIdx];
-            document.getElementById('modal-title').innerText = `📍 ${sub.place || '小时间点'} - 照片与留言`;
+            document.getElementById('modal-title').innerText = `📍 ${sub.place || '小时间点'} - 互动留言`;
             renderModalContent();
             document.getElementById('detail-modal').style.display = 'flex';
         }
@@ -783,14 +711,6 @@
 
         function renderModalContent() {
             const sub = milestonesDataCache[currentEditingMIdx].subMilestones[currentEditingSIdx];
-            const preview = document.getElementById('modal-photo-preview');
-            preview.innerHTML = (sub.images || []).map((imgSrc, imgIdx) => `
-                <div class="thumb-wrapper">
-                    <img src="${imgSrc}" class="thumb">
-                    <button class="delete-img-btn" onclick="deleteModalImage(${imgIdx})">×</button>
-                </div>
-            `).join('');
-
             const commentContainer = document.getElementById('modal-comments-container');
             const reactionLabels = ['👍 点赞', '😆 大笑', '🤝 同意', '😲 吃惊'];
 
@@ -820,21 +740,6 @@
                     </div>
                 </div>
             `).join('');
-        }
-
-        function handleModalImageUpload(input) {
-            processImage(input, (base64) => {
-                const sub = milestonesDataCache[currentEditingMIdx].subMilestones[currentEditingSIdx];
-                if (!sub.images) sub.images = [];
-                sub.images.push(base64);
-                renderModalContent();
-            });
-        }
-
-        function deleteModalImage(imgIdx) {
-            const sub = milestonesDataCache[currentEditingMIdx].subMilestones[currentEditingSIdx];
-            sub.images.splice(imgIdx, 1);
-            renderModalContent();
         }
 
         function addModalComment() {
@@ -868,36 +773,13 @@
             renderModalContent();
         }
 
-        function processImage(input, callback) {
-            if (input.files && input.files[0]) {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    const img = new Image();
-                    img.src = e.target.result;
-                    img.onload = () => {
-                        const canvas = document.createElement('canvas');
-                        let w = img.width, h = img.height, max = 600;
-                        if (w > h && w > max) { h *= max / w; w = max; }
-                        else if (h > max) { w *= max / h; h = max; }
-                        canvas.width = w; canvas.height = h;
-                        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-                        callback(canvas.toDataURL('image/jpeg', 0.7));
-                    };
-                };
-                reader.readAsDataURL(input.files[0]);
-            }
-        }
-
-        // 终极稳妥的云端保存逻辑：先删除旧数据再插入，确保全网同步
         async function saveToCloud() {
             try {
-                // 1. 先删除同名旧记录，避免冲突
                 await fetch(`${SUPABASE_URL}/rest/v1/trip_posts?person_id=eq.${SYNC_KEY}`, {
                     method: "DELETE",
                     headers: { "apikey": SUPABASE_ANON_KEY, "Authorization": `Bearer ${SUPABASE_ANON_KEY}` }
                 });
 
-                // 2. 插入最新数据
                 const res = await fetch(`${SUPABASE_URL}/rest/v1/trip_posts`, {
                     method: "POST",
                     headers: {
