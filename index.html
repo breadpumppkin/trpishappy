@@ -190,7 +190,6 @@
             display: flex; flex-direction: column; justify-content: space-between; min-height: 100px;
         }
 
-        /* 手机端横向滚动的站点直垂波浪列 */
         .sketch-timeline-container { display: flex; gap: 15px; overflow-x: auto; padding: 15px 5px; -webkit-overflow-scrolling: touch; }
         .sketch-timeline-container::-webkit-scrollbar { height: 6px; }
         .sketch-timeline-container::-webkit-scrollbar-thumb { background: #cbd5e0; border-radius: 3px; }
@@ -243,7 +242,6 @@
             font-size: 0.9rem; font-weight: bold; cursor: pointer; width: 100%; text-align: center; z-index: 2; margin-top: 5px;
         }
 
-        /* 弹窗：自适应手机全屏/居中 */
         #detail-modal, #global-comment-modal {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(15, 23, 42, 0.65); backdrop-filter: blur(10px);
@@ -307,7 +305,6 @@
 </head>
 <body>
 
-    <!-- 密码验证浮层 -->
     <div id="auth-overlay">
         <div class="auth-box">
             <h2 class="neon-flash-title" style="font-size: 1.7rem;">美好 从旅行开始</h2>
@@ -318,11 +315,11 @@
         </div>
     </div>
 
-    <!-- 弹窗：小时间点照片与留言互动墙 -->
+    <!-- 弹窗：小时间点照片与留言 -->
     <div id="detail-modal">
         <div class="modal-content-box">
             <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid #edf2f7; padding-bottom:10px; margin-bottom:15px;">
-                <h3 id="modal-title" style="font-size: 1.15rem; font-weight: 900; color: var(--text-main);">📸 照片与留言回忆录</h3>
+                <h3 id="modal-title" style="font-size: 1.15rem; font-weight: 900; color: var(--text-main);">📸 照片与留言</h3>
                 <button class="detail-btn" onclick="closeModal()" style="background:#fff5f5; color:#e53e3e; border-color:#fed7d7; width:auto; padding:4px 10px;">关闭 ×</button>
             </div>
             <div class="photo-section">
@@ -338,7 +335,7 @@
         </div>
     </div>
 
-    <!-- 弹窗：全局旅行留言 详细编辑/查看弹窗 -->
+    <!-- 弹窗：全局旅行留言 -->
     <div id="global-comment-modal">
         <div class="modal-content-box" style="max-width: 450px;">
             <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid #edf2f7; padding-bottom:10px; margin-bottom:15px;">
@@ -382,7 +379,7 @@
     <!-- 主应用程序容器 -->
     <div id="main-app" style="display: none; width: 100%; flex-direction: column; align-items: center;">
 
-        <!-- 视图 1：主页面 (Home Dashboard) -->
+        <!-- 视图 1：主页面 -->
         <div id="view-home" class="app-view active-view">
             <header>
                 <h1 class="neon-flash-title">美好 从旅行开始 ✨</h1>
@@ -390,7 +387,6 @@
             </header>
 
             <div class="home-dashboard-grid">
-                <!-- 2026 四川行卡片 -->
                 <div class="dashboard-card sichuan-theme" onclick="switchView('view-sichuan')">
                     <div class="card-icon-badge">🐼</div>
                     <div class="card-title">2026 四川行</div>
@@ -398,7 +394,6 @@
                     <button class="card-enter-btn">进入精彩旅程 →</button>
                 </div>
 
-                <!-- 2027 计划中卡片 -->
                 <div class="dashboard-card plan-theme" onclick="switchView('view-2027')">
                     <div class="card-icon-badge">🗺️</div>
                     <div class="card-title">2027 计划中</div>
@@ -408,7 +403,7 @@
             </div>
         </div>
 
-        <!-- 视图 2：2026 四川行 详情页 -->
+        <!-- 视图 2：2026 四川行 -->
         <div id="view-sichuan" class="app-view">
             <header>
                 <div class="nav-back-bar">
@@ -419,7 +414,6 @@
                 <h1 class="neon-flash-title" style="font-size: 1.8rem;">下一站 遇见美好 ✈️</h1>
                 <p>四川重庆行全景足迹 ── 手机与电脑实时云端同步</p>
                 
-                <!-- 顶部波浪游动照片动效区 -->
                 <div class="wave-floating-banner">
                     <div class="floating-photo-wrapper" id="floating-banner-photo" onclick="document.getElementById('banner-file-input').click()" title="点击更换照片">
                         <img id="banner-img-element" src="https://images.unsplash.com/photo-1506744038136-46273834b3fb" alt="旅途风光">
@@ -429,7 +423,6 @@
                 </div>
             </header>
 
-            <!-- 全局旅行留言墙区域 -->
             <div class="global-comments-section">
                 <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
                     <div>
@@ -452,12 +445,11 @@
                     </div>
                 </div>
 
-                <!-- 横向展开、各大站下方直垂波浪线布局 -->
                 <div class="sketch-timeline-container" id="sketch-timeline-root"></div>
             </div>
         </div>
 
-        <!-- 视图 3：2027 计划中 页面 -->
+        <!-- 视图 3：2027 计划中 -->
         <div id="view-2027" class="app-view">
             <header>
                 <div class="nav-back-bar">
@@ -485,7 +477,7 @@
         const SUPABASE_ANON_KEY = "sb_publishable_1eGLF31m-1KAyCJp2DEwGg_7mqCLlRQ";
         const CORRECT_PASSWORD = "0815";
         const AUTHORS = ["林姐", "赵妹", "树林", "狗子", "肥美"];
-        const SYNC_KEY = "sichuan_2026_shared_main"; // 统一的云端共享ID，确保手机和电脑读取同一行数据
+        const SYNC_KEY = "sichuan_2026_shared_main_v2"; // 采用新key避开潜在冲突
 
         const defaultMilestones = [
             { date: "9/18", place: "成都", subMilestones: [] },
@@ -499,7 +491,6 @@
         let milestonesDataCache = [];
         let globalCommentsCache = [];
         let currentEditingGlobalIndex = null;
-
         let currentEditingMIdx = null;
         let currentEditingSIdx = null;
         let draggedSubItem = null;
@@ -555,6 +546,7 @@
             }
         }
 
+        // 云端加载数据（使用标准的 GET 查询）
         async function loadCloudData() {
             try {
                 const res = await fetch(`${SUPABASE_URL}/rest/v1/trip_posts?person_id=eq.${SYNC_KEY}&select=content_data`, {
@@ -581,7 +573,7 @@
             }
         }
 
-        // ================= 全局旅行留言墙逻辑 =================
+        // 全局旅行留言墙逻辑
         function renderGlobalComments() {
             const container = document.getElementById('global-comments-grid-root');
             if (!container) return;
@@ -641,13 +633,10 @@
         function saveGlobalCommentChanges() {
             if (currentEditingGlobalIndex === null) return;
             const item = globalCommentsCache[currentEditingGlobalIndex];
-
             item.author = document.getElementById('gc-author-select').value;
             item.text = document.getElementById('gc-text-content').value;
-            
             const selectedBg = document.querySelector('input[name="gc-bg-color"]:checked');
             if (selectedBg) item.bgColor = selectedBg.value;
-
             closeGlobalCommentModal();
         }
 
@@ -659,11 +648,10 @@
             }
         }
 
-        // ================= 各站点波浪分支逻辑 =================
+        // 各站点波浪分支逻辑
         function promptAddSub(mIdx) {
             const input = prompt("请输入【时间】与【地点】\n格式：时间, 地点\n例如: 14:00, 宽窄巷子", "14:00, ");
             if (input === null) return;
-            
             const parts = input.split(/[,，]/);
             const timeVal = parts[0] ? parts[0].trim() : "时间";
             const placeVal = parts[1] ? parts[1].trim() : "地点名称";
@@ -671,12 +659,7 @@
             if (!milestonesDataCache[mIdx].subMilestones) {
                 milestonesDataCache[mIdx].subMilestones = [];
             }
-            milestonesDataCache[mIdx].subMilestones.push({
-                date: timeVal,
-                place: placeVal,
-                images: [],
-                comments: []
-            });
+            milestonesDataCache[mIdx].subMilestones.push({ date: timeVal, place: placeVal, images: [], comments: [] });
             renderSketchTimeline();
         }
 
@@ -685,7 +668,6 @@
             const sub = milestonesDataCache[mIdx].subMilestones[sIdx];
             const input = prompt("修改【时间】与【地点】\n格式：时间, 地点", `${sub.date || ''}, ${sub.place || ''}`);
             if (input === null) return;
-            
             const parts = input.split(/[,，]/);
             if (parts[0] !== undefined) sub.date = parts[0].trim();
             if (parts[1] !== undefined) sub.place = parts[1].trim();
@@ -721,13 +703,10 @@
             if (!draggedSubItem) return;
             const sourceMIdx = draggedSubItem.mIdx;
             const sourceSIdx = draggedSubItem.sIdx;
-
             if (sourceMIdx !== targetMIdx) return;
-
             const list = milestonesDataCache[targetMIdx].subMilestones;
             const [movedItem] = list.splice(sourceSIdx, 1);
             list.splice(targetSIdx, 0, movedItem);
-
             renderSketchTimeline();
         }
 
@@ -794,7 +773,6 @@
 
         function renderModalContent() {
             const sub = milestonesDataCache[currentEditingMIdx].subMilestones[currentEditingSIdx];
-            
             const preview = document.getElementById('modal-photo-preview');
             preview.innerHTML = (sub.images || []).map((imgSrc, imgIdx) => `
                 <div class="thumb-wrapper">
@@ -900,15 +878,22 @@
             }
         }
 
+        // 终极稳妥的云端保存逻辑：先删除旧数据再插入，确保全网同步
         async function saveToCloud() {
             try {
+                // 1. 先删除同名旧记录，避免冲突
+                await fetch(`${SUPABASE_URL}/rest/v1/trip_posts?person_id=eq.${SYNC_KEY}`, {
+                    method: "DELETE",
+                    headers: { "apikey": SUPABASE_ANON_KEY, "Authorization": `Bearer ${SUPABASE_ANON_KEY}` }
+                });
+
+                // 2. 插入最新数据
                 const res = await fetch(`${SUPABASE_URL}/rest/v1/trip_posts`, {
                     method: "POST",
                     headers: {
                         "apikey": SUPABASE_ANON_KEY,
                         "Authorization": `Bearer ${SUPABASE_ANON_KEY}`,
-                        "Content-Type": "application/json",
-                        "Prefer": "resolution=merge-duplicates"
+                        "Content-Type": "application/json"
                     },
                     body: JSON.stringify({ 
                         person_id: SYNC_KEY, 
@@ -926,7 +911,9 @@
                         setTimeout(() => { tip.style.opacity = '0'; }, 2500);
                     }
                 } else {
-                    alert("保存失败，请检查网络。");
+                    const errText = await res.text();
+                    console.error("保存失败详情:", errText);
+                    alert("保存失败，请检查控制台错误信息。");
                 }
             } catch (err) {
                 console.error("保存异常", err);
