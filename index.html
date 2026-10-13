@@ -417,7 +417,7 @@
                     <span id="global-save-tip" class="save-tip">✓ 云端已同步！</span>
                 </div>
                 <h1 class="neon-flash-title" style="font-size: 1.8rem;">下一站 遇见美好 ✈️</h1>
-                <p>四川重庆行全景足迹 ── 手机端畅快浏览与互动</p>
+                <p>四川重庆行全景足迹 ── 手机与电脑实时云端同步</p>
                 
                 <!-- 顶部波浪游动照片动效区 -->
                 <div class="wave-floating-banner">
@@ -485,6 +485,7 @@
         const SUPABASE_ANON_KEY = "sb_publishable_1eGLF31m-1KAyCJp2DEwGg_7mqCLlRQ";
         const CORRECT_PASSWORD = "0815";
         const AUTHORS = ["林姐", "赵妹", "树林", "狗子", "肥美"];
+        const SYNC_KEY = "sichuan_2026_shared_main"; // 统一的云端共享ID，确保手机和电脑读取同一行数据
 
         const defaultMilestones = [
             { date: "9/18", place: "成都", subMilestones: [] },
@@ -556,7 +557,7 @@
 
         async function loadCloudData() {
             try {
-                const res = await fetch(`${SUPABASE_URL}/rest/v1/trip_posts?person_id=eq.sichuan_memoir_sketch_style&select=content_data`, {
+                const res = await fetch(`${SUPABASE_URL}/rest/v1/trip_posts?person_id=eq.${SYNC_KEY}&select=content_data`, {
                     headers: { "apikey": SUPABASE_ANON_KEY, "Authorization": `Bearer ${SUPABASE_ANON_KEY}` }
                 });
                 if (!res.ok) return;
@@ -745,7 +746,7 @@
                          ondragstart="onDragStart(event, ${mIdx}, ${sIdx})" 
                          ondragend="onDragEnd(event)" 
                          ondragover="onDragOver(event)" 
-                         ondrop="ondrop(event, ${mIdx}, ${sIdx})"
+                         ondrop="onDrop(event, ${mIdx}, ${sIdx})"
                          onclick="openModal(${mIdx}, ${sIdx})">
                         <div style="display:flex; justify-content:space-between; align-items:center;">
                             <span style="font-size: 0.8rem; font-weight: 700; color: ${theme.accent};">${sub.date || '时间'}</span>
@@ -910,7 +911,7 @@
                         "Prefer": "resolution=merge-duplicates"
                     },
                     body: JSON.stringify({ 
-                        person_id: "sichuan_memoir_sketch_style", 
+                        person_id: SYNC_KEY, 
                         content_data: { 
                             milestones: milestonesDataCache,
                             globalComments: globalCommentsCache 
