@@ -179,6 +179,7 @@
             box-shadow: 0 4px 10px rgba(0,0,0,0.15); margin-bottom: 8px;
             display: flex; align-items: center; justify-content: center; font-size: 1rem; font-weight: bold;
         }
+        /* 大站点标题字体放大加粗 */
         .station-title { font-size: 1.45rem; font-weight: 900; text-align: center; text-shadow: 0 2px 4px rgba(0,0,0,0.25); line-height: 1.4; letter-spacing: 1px; }
         .station-icon { font-size: 1.8rem; margin-bottom: 6px; }
 
@@ -294,9 +295,7 @@
 
                 <div>
                     <label style="font-size: 0.85rem; font-weight: 700; color: var(--text-muted); display: block; margin-bottom: 8px;">选择字体颜色（红黄蓝绿青蓝紫粉黑）：</label>
-                    <div style="display: flex; gap: 8px; flex-wrap: wrap;" id="color-picker-container">
-                        <!-- 色彩按钮由JS动态生成 -->
-                    </div>
+                    <div style="display: flex; gap: 8px; flex-wrap: wrap;" id="color-picker-container"></div>
                 </div>
 
                 <button class="primary-btn" style="width:100%; margin-top:10px;" onclick="confirmAddSubItem()">确定保存</button>
@@ -454,9 +453,9 @@
         const SUPABASE_ANON_KEY = "sb_publishable_1eGLF31m-1KAyCJp2DEwGg_7mqCLlRQ";
         const CORRECT_PASSWORD = "0815";
         const AUTHORS = ["林姐", "赵妹", "树林", "狗子", "肥美"];
-        const SYNC_KEY = "sichuan_2026_shared_main_v2";
+        const SYNC_KEY = "sichuan_2026_shared_main_v3"; // 升级了版本Key，确保能直接加载全新的独立重庆天数
 
-        // 红黄蓝绿青蓝紫粉黑 颜色配置
+        // 颜色配置
         const AVAILABLE_COLORS = [
             { name: "红", value: "#e53e3e" },
             { name: "黄", value: "#d69e2e" },
@@ -468,11 +467,12 @@
             { name: "黑", value: "#1a202c" }
         ];
 
-        let selectedColorHex = "#3182ce"; // 默认选中蓝色
-        let activeActionType = 'add'; // 'add' 或 'edit'
+        let selectedColorHex = "#3182ce"; 
+        let activeActionType = 'add'; 
         let targetStationIdx = null;
         let targetSubIdx = null;
 
+        // 重庆已按天独立拆分
         const defaultMilestones = [
             { date: "9/18", place: "成都", subMilestones: [] },
             { date: "9/19 - 9/21", place: "九寨沟", subMilestones: [] },
@@ -508,7 +508,6 @@
             container.innerHTML = AVAILABLE_COLORS.map(c => `
                 <div class="color-swatch" onclick="selectColor('${c.value}', this)" style="background: ${c.value}; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; color: white; font-size: 0.75rem; font-weight: bold; border: 3px solid transparent; box-shadow: 0 2px 5px rgba(0,0,0,0.15);" title="${c.name}"></div>
             `).join('');
-            // 默认选中第一个颜色
             const firstSwatch = container.querySelector('.color-swatch');
             if (firstSwatch) selectColor(AVAILABLE_COLORS[0].value, firstSwatch);
         }
@@ -696,7 +695,6 @@
             }
         }
 
-        // 打开添加弹窗
         function promptAddSub(mIdx) {
             activeActionType = 'add';
             targetStationIdx = mIdx;
@@ -706,7 +704,6 @@
             document.getElementById('add-sub-modal').style.display = 'flex';
         }
 
-        // 打开修改弹窗
         function editSubMilestone(mIdx, sIdx, event) {
             event.stopPropagation();
             activeActionType = 'edit';
@@ -727,7 +724,6 @@
             document.getElementById('add-sub-modal').style.display = 'none';
         }
 
-        // 确定保存添加/修改
         function confirmAddSubItem() {
             const timeVal = document.getElementById('sub-time-input').value.trim();
             const placeVal = document.getElementById('sub-place-input').value.trim();
