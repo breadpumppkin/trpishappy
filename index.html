@@ -2,8 +2,8 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>下一站 遇见美好 - 四川重庆行动感波浪足迹</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>美好 从旅行开始 - 5人专属足迹与计划</title>
     <style>
         :root {
             --bg-gradient: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
@@ -11,15 +11,16 @@
             --text-main: #2d3748;
             --text-muted: #718096;
             --shadow-card: 0 15px 35px rgba(0, 0, 0, 0.06), 0 5px 15px rgba(0, 0, 0, 0.04);
+            --primary-gradient: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%);
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
 
         body {
             background: var(--bg-gradient);
             color: var(--text-main);
             min-height: 100vh;
-            padding: 40px 20px;
+            padding: 20px 10px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -32,86 +33,18 @@
             background-size: 400% 400%;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            font-size: 2.3rem; font-weight: 900; letter-spacing: 1px; text-align: center;
-        }
-
-        /* 顶部波浪游动照片动效区（显著加大，照顾长辈视力） */
-        .wave-floating-banner {
-            width: 100%;
-            max-width: 650px;
-            height: 130px;
-            position: relative;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin: 15px 0 25px 0;
-            pointer-events: none;
-        }
-        .floating-photo-wrapper {
-            position: absolute;
-            width: 120px; /* 初始尺寸放大到 120px */
-            height: 120px;
-            border-radius: 50%;
-            border: 4px solid #fff;
-            box-shadow: 0 10px 30px rgba(255, 107, 107, 0.45);
-            overflow: hidden;
-            background: #fff;
-            cursor: pointer;
-            pointer-events: auto;
-            animation: waveMotion 9s ease-in-out infinite alternate;
-            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-        /* 鼠标悬停时放大到 1.5 倍，方便看清细节 */
-        .floating-photo-wrapper:hover {
-            transform: scale(1.5) !important;
-            z-index: 100;
-            box-shadow: 0 15px 40px rgba(255, 107, 107, 0.6);
-        }
-        .floating-photo-wrapper img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        .floating-tip {
-            position: absolute;
-            bottom: -22px;
-            font-size: 0.8rem;
-            color: #2d3748;
-            font-weight: 700;
-            background: rgba(255,255,255,0.9);
-            padding: 2px 10px;
-            border-radius: 12px;
-            white-space: nowrap;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-        }
-
-        @keyframes waveMotion {
-            0% {
-                transform: translateX(-140px) translateY(0px) rotate(-4deg);
-            }
-            25% {
-                transform: translateX(-70px) translateY(-12px) rotate(3deg);
-            }
-            50% {
-                transform: translateX(0px) translateY(0px) rotate(0deg);
-            }
-            75% {
-                transform: translateX(70px) translateY(12px) rotate(-3deg);
-            }
-            100% {
-                transform: translateX(140px) translateY(0px) rotate(4deg);
-            }
+            font-size: 2.1rem; font-weight: 900; letter-spacing: 1px; text-align: center;
         }
 
         #auth-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(15, 23, 42, 0.65); backdrop-filter: blur(16px);
-            display: flex; justify-content: center; align-items: center; z-index: 9999;
+            display: flex; justify-content: center; align-items: center; z-index: 9999; padding: 20px;
         }
 
         .auth-box {
-            background: rgba(255, 255, 255, 0.98); padding: 45px 35px; border-radius: 28px;
-            text-align: center; box-shadow: 0 25px 60px rgba(0, 0, 0, 0.3); width: 90%; max-width: 400px;
+            background: rgba(255, 255, 255, 0.98); padding: 35px 25px; border-radius: 28px;
+            text-align: center; box-shadow: 0 25px 60px rgba(0, 0, 0, 0.3); width: 100%; max-width: 380px;
         }
 
         .auth-box input {
@@ -120,125 +53,224 @@
         }
 
         .auth-box button {
-            width: 100%; padding: 15px; background: linear-gradient(135deg, #2e7d32 0%, #4caf50 100%); color: white;
+            width: 100%; padding: 15px; background: var(--primary-gradient); color: white;
             border: none; border-radius: 14px; font-size: 1.1rem; font-weight: bold; cursor: pointer;
         }
 
         .error-tip { color: #e53e3e; font-size: 0.9rem; margin-top: 15px; display: none; font-weight: 600; }
 
-        .container { width: 100%; max-width: 1250px; display: none; }
-        header { text-align: center; margin-bottom: 25px; }
-        header p { color: var(--text-muted); font-size: 1.1rem; margin-top: 10px; font-weight: 500; }
+        /* 视图切换容器 */
+        .app-view { width: 100%; max-width: 1250px; display: none; }
+        .active-view { display: block; }
+
+        header { text-align: center; margin-bottom: 20px; padding: 0 10px; }
+        header p { color: var(--text-muted); font-size: 1rem; margin-top: 8px; font-weight: 500; }
+
+        /* 主页面大卡片选择区样式 */
+        .home-dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            margin-top: 30px;
+            padding: 5px;
+        }
+        @media(min-width: 768px) {
+            .home-dashboard-grid { grid-template-columns: repeat(2, 1fr); gap: 30px; }
+        }
+
+        .dashboard-card {
+            background: var(--card-bg);
+            border-radius: 24px;
+            padding: 35px 25px;
+            box-shadow: var(--shadow-card);
+            border: 2px solid rgba(255,255,255,0.9);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .dashboard-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.12);
+        }
+
+        .dashboard-card.sichuan-theme {
+            background: linear-gradient(135deg, rgba(76, 175, 80, 0.08) 0%, rgba(0, 188, 212, 0.08) 100%);
+            border-color: #4caf50;
+        }
+
+        .dashboard-card.plan-theme {
+            background: linear-gradient(135deg, rgba(255, 107, 107, 0.08) 0%, rgba(255, 142, 83, 0.08) 100%);
+            border-color: #FF6B6B;
+        }
+
+        .card-icon-badge {
+            width: 70px; height: 70px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 2rem; margin-bottom: 15px; box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+
+        .sichuan-theme .card-icon-badge { background: linear-gradient(135deg, #2e7d32, #4caf50); color: white; }
+        .plan-theme .card-icon-badge { background: linear-gradient(135deg, #FF6B6B, #FF8E53); color: white; }
+
+        .card-title { font-size: 1.5rem; font-weight: 900; color: var(--text-main); margin-bottom: 8px; }
+        .card-desc { font-size: 0.95rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 20px; }
+
+        .card-enter-btn {
+            padding: 12px 28px; border-radius: 14px; font-size: 1rem; font-weight: bold;
+            border: none; cursor: pointer; color: white; box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        }
+        .sichuan-theme .card-enter-btn { background: linear-gradient(135deg, #2e7d32, #4caf50); }
+        .plan-theme .card-enter-btn { background: linear-gradient(135deg, #FF6B6B, #FF8E53); }
+
+        /* 返回主页按钮栏 */
+        .nav-back-bar {
+            display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;
+        }
+
+        .back-home-btn {
+            background: #fff; color: #4a5568; border: 2px solid #cbd5e0; padding: 8px 14px;
+            border-radius: 12px; font-weight: bold; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04); font-size: 0.9rem;
+        }
+
+        /* 顶部波浪游动照片动效区 */
+        .wave-floating-banner {
+            width: 100%; max-width: 650px; height: 110px; position: relative;
+            display: flex; justify-content: center; align-items: center; margin: 10px auto 20px auto; pointer-events: none;
+        }
+        .floating-photo-wrapper {
+            position: absolute; width: 105px; height: 105px; border-radius: 50%;
+            border: 4px solid #fff; box-shadow: 0 10px 30px rgba(255, 107, 107, 0.45);
+            overflow: hidden; background: #fff; cursor: pointer; pointer-events: auto;
+            animation: waveMotion 9s ease-in-out infinite alternate;
+        }
+        .floating-photo-wrapper img { width: 100%; height: 100%; object-fit: cover; }
+        .floating-tip {
+            position: absolute; bottom: -20px; font-size: 0.75rem; color: #2d3748; font-weight: 700;
+            background: rgba(255,255,255,0.9); padding: 2px 8px; border-radius: 10px; white-space: nowrap; box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+
+        @keyframes waveMotion {
+            0% { transform: translateX(-100px) translateY(0px) rotate(-4deg); }
+            50% { transform: translateX(0px) translateY(-10px) rotate(0deg); }
+            100% { transform: translateX(100px) translateY(0px) rotate(4deg); }
+        }
 
         .panel-box {
-            background: var(--card-bg); border-radius: 24px; padding: 30px;
-            box-shadow: var(--shadow-card); border: 1px solid rgba(255,255,255,0.8);
-            margin-bottom: 30px;
+            background: var(--card-bg); border-radius: 20px; padding: 20px 15px;
+            box-shadow: var(--shadow-card); border: 1px solid rgba(255,255,255,0.8); margin-bottom: 25px;
+        }
+        @media(min-width: 768px) {
+            .panel-box { padding: 30px; border-radius: 24px; }
         }
 
         .panel-header-row {
-            display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; flex-wrap: wrap; gap: 15px;
+            display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 12px;
         }
 
-        /* 横向展开列 + 各站直垂波浪线布局 */
-        .sketch-timeline-container {
-            display: flex; gap: 25px; overflow-x: auto; padding: 20px 10px;
+        /* 全局旅行留言墙专区样式 */
+        .global-comments-section {
+            margin-bottom: 25px; background: #f8fafc; border-radius: 20px; padding: 20px 15px; border: 1.5px solid #e2e8f0;
         }
-        .sketch-timeline-container::-webkit-scrollbar { height: 8px; }
-        .sketch-timeline-container::-webkit-scrollbar-thumb { background: #cbd5e0; border-radius: 4px; }
-
-        /* 每个站点的垂直分支列 */
-        .station-column {
-            min-width: 250px; flex: 1; display: flex; flex-direction: column; align-items: center; position: relative;
+        .global-comments-grid {
+            display: grid; grid-template-columns: 1fr; gap: 12px; margin-top: 15px;
+        }
+        @media(min-width: 768px) {
+            .global-comments-grid { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); }
+        }
+        .global-comment-mini-card {
+            border-radius: 14px; padding: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+            cursor: pointer; border: 1.5px solid rgba(0,0,0,0.06);
+            display: flex; flex-direction: column; justify-content: space-between; min-height: 100px;
         }
 
-        /* 站点大圆点及名称 */
+        /* 手机端横向滚动的站点直垂波浪列 */
+        .sketch-timeline-container { display: flex; gap: 15px; overflow-x: auto; padding: 15px 5px; -webkit-overflow-scrolling: touch; }
+        .sketch-timeline-container::-webkit-scrollbar { height: 6px; }
+        .sketch-timeline-container::-webkit-scrollbar-thumb { background: #cbd5e0; border-radius: 3px; }
+
+        .station-column { min-width: 260px; flex: 1; display: flex; flex-direction: column; align-items: center; position: relative; }
+
         .station-node-header {
-            display: flex; flex-direction: column; align-items: center; 
-            border-radius: 20px; padding: 18px 12px; width: 100%; 
+            display: flex; flex-direction: column; align-items: center; border-radius: 18px; padding: 15px 10px; width: 100%;
             box-shadow: 0 6px 20px rgba(0,0,0,0.08); z-index: 2; color: white;
-            transition: transform 0.2s;
         }
-        .station-node-header:hover { transform: translateY(-3px); }
 
         .station-dot {
-            width: 38px; height: 38px; background: #fff; border-radius: 50%;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.15); margin-bottom: 8px;
-            display: flex; align-items: center; justify-content: center; font-size: 0.9rem; font-weight: bold;
+            width: 35px; height: 35px; background: #fff; border-radius: 50%;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15); margin-bottom: 6px;
+            display: flex; align-items: center; justify-content: center; font-size: 0.85rem; font-weight: bold;
         }
-        .station-title { font-size: 1rem; font-weight: 900; text-align: center; text-shadow: 0 1px 3px rgba(0,0,0,0.2); }
-        .station-icon { font-size: 1.4rem; margin-bottom: 4px; }
+        .station-title { font-size: 0.95rem; font-weight: 900; text-align: center; text-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+        .station-icon { font-size: 1.3rem; margin-bottom: 2px; }
 
-        /* 从站点垂直向下延伸的波浪线区域 */
         .vertical-wave-branch {
-            position: relative; width: 100%; min-height: 250px; padding: 25px 10px 20px 10px;
+            position: relative; width: 100%; min-height: 220px; padding: 20px 8px 15px 8px;
             display: flex; flex-direction: column; gap: 12px; align-items: center;
         }
-        .vertical-wave-svg {
-            position: absolute; top: 0; bottom: 0; left: 50%; transform: translateX(-50%); width: 40px; pointer-events: none; z-index: 1;
-        }
+        .vertical-wave-svg { position: absolute; top: 0; bottom: 0; left: 50%; transform: translateX(-50%); width: 40px; pointer-events: none; z-index: 1; }
 
-        /* 小时间点卡片（支持鼠标拖拽排序） */
         .sub-event-node {
-            background: #fff; border: 1.5px solid #cbd5e0; border-radius: 12px; padding: 12px 14px;
+            background: #fff; border: 1.5px solid #cbd5e0; border-radius: 12px; padding: 12px;
             width: 100%; box-shadow: 0 2px 8px rgba(0,0,0,0.03); z-index: 2; position: relative;
-            display: flex; flex-direction: column; gap: 8px; transition: all 0.2s; cursor: grab;
+            display: flex; flex-direction: column; gap: 8px; cursor: pointer;
         }
-        .sub-event-node:active { cursor: grabbing; }
-        .sub-event-node.dragging { opacity: 0.4; border: 2px dashed #718096; }
-        .sub-event-node:hover { box-shadow: 0 6px 15px rgba(0,0,0,0.08); }
         .sub-event-node::before {
-            content: ''; position: absolute; left: -16px; top: 50%; transform: translateY(-50%); width: 10px; height: 10px;
+            content: ''; position: absolute; left: -14px; top: 50%; transform: translateY(-50%); width: 9px; height: 9px;
             background: #fff; border: 2.5px solid currentColor; border-radius: 50%;
         }
 
         .primary-btn {
             background: linear-gradient(135deg, #2e7d32 0%, #4caf50 100%); color: white; border: none;
-            padding: 10px 20px; border-radius: 12px; font-size: 0.95rem; font-weight: bold;
-            cursor: pointer; box-shadow: 0 4px 15px rgba(46, 125, 50, 0.35); display: inline-flex; align-items: center; gap: 6px;
+            padding: 12px 20px; border-radius: 12px; font-size: 1rem; font-weight: bold;
+            cursor: pointer; box-shadow: 0 4px 15px rgba(46, 125, 50, 0.35); display: inline-flex; align-items: center; gap: 6px; width: 100%; justify-content: center;
         }
+        @media(min-width: 768px) { .primary-btn { width: auto; } }
 
         .detail-btn {
-            background: #f8fafc; border: 1.5px solid #cbd5e0;
-            padding: 5px 10px; border-radius: 8px; font-size: 0.8rem; font-weight: bold; cursor: pointer; width: 100%; text-align: center;
-            transition: all 0.2s;
+            background: #f8fafc; border: 1.5px solid #cbd5e0; padding: 8px 10px; border-radius: 8px;
+            font-size: 0.85rem; font-weight: bold; cursor: pointer; width: 100%; text-align: center;
         }
 
-        /* 手动添加小时间点按钮 */
         .add-sub-inline-btn {
-            background: #fff; border: 1.5px dashed currentColor;
-            padding: 8px 12px; border-radius: 10px; font-size: 0.85rem; font-weight: bold;
-            cursor: pointer; width: 100%; text-align: center; z-index: 2; margin-top: 5px;
-            transition: all 0.2s;
+            background: #fff; border: 1.5px dashed currentColor; padding: 10px; border-radius: 10px;
+            font-size: 0.9rem; font-weight: bold; cursor: pointer; width: 100%; text-align: center; z-index: 2; margin-top: 5px;
         }
-        .add-sub-inline-btn:hover { background: rgba(255,255,255,0.8); box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
 
-        /* 弹窗：折叠内容的展开区域（照片与留言互动） */
-        #detail-modal {
+        /* 弹窗：自适应手机全屏/居中 */
+        #detail-modal, #global-comment-modal {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(15, 23, 42, 0.65); backdrop-filter: blur(10px);
-            display: none; justify-content: center; align-items: center; z-index: 9999; padding: 20px;
+            display: none; justify-content: center; align-items: center; z-index: 9999; padding: 15px;
         }
         .modal-content-box {
-            background: #fff; width: 100%; max-width: 650px; border-radius: 24px; padding: 30px;
-            box-shadow: 0 25px 60px rgba(0,0,0,0.3); max-height: 90vh; overflow-y: auto;
+            background: #fff; width: 100%; max-width: 600px; border-radius: 20px; padding: 20px;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.3); max-height: 90vh; overflow-y: auto; -webkit-overflow-scrolling: touch;
         }
+        @media(min-width: 768px) { .modal-content-box { padding: 30px; border-radius: 24px; } }
 
         .photo-section {
             background: #f8fafc; border: 1.5px dashed #cbd5e0; border-radius: 14px;
-            padding: 15px; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+            padding: 12px; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
         }
         .upload-btn {
-            background: #edf2f7; color: #4a5568; padding: 8px 14px; border-radius: 10px;
-            font-size: 0.85rem; cursor: pointer; border: 1.5px dashed #a0aec0; font-weight: 600; display: inline-flex; align-items: center; gap: 6px;
+            background: #edf2f7; color: #4a5568; padding: 10px 14px; border-radius: 10px;
+            font-size: 0.9rem; cursor: pointer; border: 1.5px dashed #a0aec0; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; width: 100%; justify-content: center;
         }
+        @media(min-width: 768px) { .upload-btn { width: auto; } }
         .hidden-file-input { display: none; }
         .photo-preview-container { display: flex; gap: 8px; flex-wrap: wrap; }
-        .thumb-wrapper { position: relative; width: 65px; height: 65px; }
+        .thumb-wrapper { position: relative; width: 70px; height: 70px; }
         .thumb { width: 100%; height: 100%; object-fit: cover; border-radius: 10px; border: 2px solid #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
         .delete-img-btn {
             position: absolute; top: -6px; right: -6px; background: #e53e3e; color: white;
-            border: none; width: 18px; height: 18px; border-radius: 50%; font-size: 11px;
+            border: none; width: 22px; height: 22px; border-radius: 50%; font-size: 13px;
             font-weight: bold; display: flex; justify-content: center; align-items: center; cursor: pointer;
         }
 
@@ -247,54 +279,51 @@
             padding: 12px; margin-bottom: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.02);
         }
         .comment-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 6px; }
-        .author-select {
-            padding: 4px 8px; border: 1.5px solid #cbd5e0; border-radius: 8px;
-            font-size: 0.85rem; background: #fff; font-weight: 600; outline: none;
-        }
+        .author-select { padding: 6px 10px; border: 1.5px solid #cbd5e0; border-radius: 8px; font-size: 0.9rem; background: #fff; font-weight: 600; outline: none; }
         textarea {
-            width: 100%; height: 60px; padding: 8px; border: 1.5px solid #cbd5e0;
-            border-radius: 8px; resize: vertical; font-size: 0.9rem; background: #fff; outline: none; color: var(--text-main);
+            width: 100%; height: 80px; padding: 10px; border: 1.5px solid #cbd5e0;
+            border-radius: 8px; resize: vertical; font-size: 0.95rem; background: #fff; outline: none; color: var(--text-main);
         }
         textarea:focus { border-color: #4caf50; }
         .comment-footer {
             margin-top: 8px; padding-top: 6px; border-top: 1px dashed #edf2f7;
-            display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px;
+            display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;
         }
         .reaction-bar { display: flex; gap: 6px; flex-wrap: wrap; }
         .reaction-btn {
-            background: #fff; border: 1.5px solid #e2e8f0; padding: 4px 10px; border-radius: 20px;
-            font-size: 0.75rem; cursor: pointer; display: flex; align-items: center; gap: 4px; font-weight: 600; color: #475569;
+            background: #fff; border: 1.5px solid #e2e8f0; padding: 6px 10px; border-radius: 20px;
+            font-size: 0.8rem; cursor: pointer; display: flex; align-items: center; gap: 4px; font-weight: 600; color: #475569;
         }
         .reaction-btn.active { background: #fff5f5; color: #e53e3e; }
 
         .add-comment-btn {
             background: #edf2f7; color: #4a5568; border: 1.5px dashed #cbd5e0;
-            padding: 10px; border-radius: 12px; font-size: 0.9rem; font-weight: bold;
-            cursor: pointer; width: 100%; margin-top: 12px; text-align: center;
+            padding: 12px; border-radius: 12px; font-size: 0.95rem; font-weight: bold;
+            cursor: pointer; width: 100%; margin-top: 10px; text-align: center;
         }
-        .add-comment-btn:hover { background: #e2e8f0; }
 
         .save-tip { font-size: 0.85rem; color: #38a169; font-weight: bold; opacity: 0; transition: opacity 0.3s; }
     </style>
 </head>
 <body>
 
+    <!-- 密码验证浮层 -->
     <div id="auth-overlay">
         <div class="auth-box">
-            <h2 class="neon-flash-title" style="font-size: 1.8rem;">下一站 遇见美好</h2>
-            <div style="color: #718096; font-size: 0.95rem; margin: 10px 0 20px 0; font-weight: 600;">专属空间</div>
+            <h2 class="neon-flash-title" style="font-size: 1.7rem;">美好 从旅行开始</h2>
+            <div style="color: #718096; font-size: 0.9rem; margin: 10px 0 20px 0; font-weight: 600;">5人专属私密空间</div>
             <input type="password" id="password-input" maxlength="4" placeholder="••••">
             <button onclick="checkPassword()">开启回忆空间</button>
             <div id="error-msg" class="error-tip">密码不正确，请重新输入</div>
         </div>
     </div>
 
-    <!-- 弹窗：折叠内容的展开区域（照片与留言互动） -->
+    <!-- 弹窗：小时间点照片与留言互动墙 -->
     <div id="detail-modal">
         <div class="modal-content-box">
-            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid #edf2f7; padding-bottom:12px; margin-bottom:20px;">
-                <h3 id="modal-title" style="font-size: 1.3rem; font-weight: 900; color: var(--text-main);">📸 照片与留言回忆录</h3>
-                <button class="detail-btn" onclick="closeModal()" style="background:#fff5f5; color:#e53e3e; border-color:#fed7d7; width:auto;">关闭 ×</button>
+            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid #edf2f7; padding-bottom:10px; margin-bottom:15px;">
+                <h3 id="modal-title" style="font-size: 1.15rem; font-weight: 900; color: var(--text-main);">📸 照片与留言回忆录</h3>
+                <button class="detail-btn" onclick="closeModal()" style="background:#fff5f5; color:#e53e3e; border-color:#fed7d7; width:auto; padding:4px 10px;">关闭 ×</button>
             </div>
             <div class="photo-section">
                 <label class="upload-btn">➕ 上传现场照片<input type="file" class="hidden-file-input" accept="image/*" onchange="handleModalImageUpload(this)"></label>
@@ -305,40 +334,150 @@
                 <div id="modal-comments-container"></div>
                 <button class="add-comment-btn" onclick="addModalComment()">➕ 添加新评价/感想</button>
             </div>
-            <button class="primary-btn" style="width:100%; margin-top:20px; justify-content:center;" onclick="closeModal()">保存并返回主画面</button>
+            <button class="primary-btn" style="width:100%; margin-top:20px;" onclick="closeModal()">保存并返回</button>
         </div>
     </div>
 
-    <div class="container" id="main-content">
-        <header>
-            <h1 class="neon-flash-title">下一站 遇见美好 ✈️</h1>
-            <p>四川重庆行全景足迹</p>
+    <!-- 弹窗：全局旅行留言 详细编辑/查看弹窗 -->
+    <div id="global-comment-modal">
+        <div class="modal-content-box" style="max-width: 450px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid #edf2f7; padding-bottom:10px; margin-bottom:15px;">
+                <h3 style="font-size: 1.15rem; font-weight: 900; color: var(--text-main);">✍️ 四川行全体留言详情</h3>
+                <button class="detail-btn" onclick="closeGlobalCommentModal()" style="background:#fff5f5; color:#e53e3e; border-color:#fed7d7; width:auto; padding:4px 10px;">关闭 ×</button>
+            </div>
             
-            <!-- 顶部波浪游动照片动效区（超大尺寸，照顾长辈视力，鼠标悬停时进一步放大） -->
-            <div class="wave-floating-banner">
-                <div class="floating-photo-wrapper" id="floating-banner-photo" onclick="document.getElementById('banner-file-input').click()" title="点击更换波浪游动照片">
-                    <img id="banner-img-element" src="https://images.unsplash.com/photo-1506744038136-46273834b3fb" alt="旅途风光">
-                    <input type="file" id="banner-file-input" class="hidden-file-input" accept="image/*" onchange="handleBannerPhotoUpload(this)">
-                    <div class="floating-tip">✨ 点击换图 / 悬停放大</div>
-                </div>
-            </div>
-        </header>
-
-        <div class="panel-box">
-            <div class="panel-header-row">
+            <div style="display: flex; flex-direction: column; gap: 14px;">
                 <div>
-                    <h2 style="font-size: 1.5rem; font-weight: 800; color: var(--text-main);">🌊 回忆美好</h2>
-                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 4px;">支持拖拽排序、修改删除，点击小卡片按钮展开照片与留言</p>
+                    <label style="font-size: 0.85rem; font-weight: 700; color: var(--text-muted); display: block; margin-bottom: 5px;">发言人（落款）：</label>
+                    <select id="gc-author-select" class="author-select" style="width: 100%; padding: 10px;">
+                        <option value="">请选择落款人</option>
+                    </select>
                 </div>
-                <div style="display: flex; gap: 10px; align-items: center;">
-                    <span id="global-save-tip" class="save-tip">✓ 云端保存成功！</span>
-                    <button class="primary-btn" onclick="saveToCloud()">💾 保存修改</button>
+
+                <div>
+                    <label style="font-size: 0.85rem; font-weight: 700; color: var(--text-muted); display: block; margin-bottom: 5px;">留言背景颜色：</label>
+                    <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                        <label style="cursor: pointer; font-size: 0.9rem;"><input type="radio" name="gc-bg-color" value="#ffffff" checked> 纯白</label>
+                        <label style="cursor: pointer; font-size: 0.9rem;"><input type="radio" name="gc-bg-color" value="#e8f5e9"> 竹绿</label>
+                        <label style="cursor: pointer; font-size: 0.9rem;"><input type="radio" name="gc-bg-color" value="#e0f7fa"> 碧水</label>
+                        <label style="cursor: pointer; font-size: 0.9rem;"><input type="radio" name="gc-bg-color" value="#fff9c4"> 暖阳</label>
+                    </div>
+                </div>
+
+                <div>
+                    <label style="font-size: 0.85rem; font-weight: 700; color: var(--text-muted); display: block; margin-bottom: 5px;">留言内容：</label>
+                    <textarea id="gc-text-content" style="height: 100px;" placeholder="写下对这次四川行的整体感想与美好祝福..."></textarea>
+                </div>
+
+                <div style="font-size: 0.8rem; color: var(--text-muted);" id="gc-timestamp-display"></div>
+
+                <div style="display: flex; gap: 10px; margin-top: 5px;">
+                    <button class="primary-btn" style="flex: 1;" onclick="saveGlobalCommentChanges()">💾 保存修改</button>
+                    <button class="primary-btn" style="flex: 1; background: linear-gradient(135deg, #e53e3e 0%, #c53030 100%);" onclick="deleteGlobalComment()">🗑️ 删除</button>
                 </div>
             </div>
-
-            <!-- 横向展开、各大站下方直垂波浪线布局 -->
-            <div class="sketch-timeline-container" id="sketch-timeline-root"></div>
         </div>
+    </div>
+
+    <!-- 主应用程序容器 -->
+    <div id="main-app" style="display: none; width: 100%; flex-direction: column; align-items: center;">
+
+        <!-- 视图 1：主页面 (Home Dashboard) -->
+        <div id="view-home" class="app-view active-view">
+            <header>
+                <h1 class="neon-flash-title">美好 从旅行开始 ✨</h1>
+                <p>记录我们的每一个足迹与未来期待 ── 5人专属私密空间</p>
+            </header>
+
+            <div class="home-dashboard-grid">
+                <!-- 2026 四川行卡片 -->
+                <div class="dashboard-card sichuan-theme" onclick="switchView('view-sichuan')">
+                    <div class="card-icon-badge">🐼</div>
+                    <div class="card-title">2026 四川行</div>
+                    <div class="card-desc">成都、九寨沟、都江堰、乐山、重庆全景波浪足迹，留下大家的灿烂笑容与温馨留言。</div>
+                    <button class="card-enter-btn">进入精彩旅程 →</button>
+                </div>
+
+                <!-- 2027 计划中卡片 -->
+                <div class="dashboard-card plan-theme" onclick="switchView('view-2027')">
+                    <div class="card-icon-badge">🗺️</div>
+                    <div class="card-title">2027 计划中</div>
+                    <div class="card-desc">下一站的美好正在孕育，大家可以在这里畅想、讨论和规划我们的下一个目的地！</div>
+                    <button class="card-enter-btn">查看计划构想 →</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 视图 2：2026 四川行 详情页 -->
+        <div id="view-sichuan" class="app-view">
+            <header>
+                <div class="nav-back-bar">
+                    <button class="back-home-btn" onclick="switchView('view-home')">← 返回主页面</button>
+                    <span style="font-weight: 800; color: #2e7d32; font-size: 0.95rem;">🐼 2026 四川重庆行</span>
+                    <span id="global-save-tip" class="save-tip">✓ 云端已同步！</span>
+                </div>
+                <h1 class="neon-flash-title" style="font-size: 1.8rem;">下一站 遇见美好 ✈️</h1>
+                <p>四川重庆行全景足迹 ── 手机端畅快浏览与互动</p>
+                
+                <!-- 顶部波浪游动照片动效区 -->
+                <div class="wave-floating-banner">
+                    <div class="floating-photo-wrapper" id="floating-banner-photo" onclick="document.getElementById('banner-file-input').click()" title="点击更换照片">
+                        <img id="banner-img-element" src="https://images.unsplash.com/photo-1506744038136-46273834b3fb" alt="旅途风光">
+                        <input type="file" id="banner-file-input" class="hidden-file-input" accept="image/*" onchange="handleBannerPhotoUpload(this)">
+                        <div class="floating-tip">✨ 点击换图</div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- 全局旅行留言墙区域 -->
+            <div class="global-comments-section">
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+                    <div>
+                        <h2 style="font-size: 1.15rem; font-weight: 800; color: var(--text-main);">💬 全体旅行留言墙</h2>
+                        <p style="color: var(--text-muted); font-size: 0.8rem; margin-top: 2px;">记录对行程的整体感悟（点击卡片查看详细或修改）</p>
+                    </div>
+                    <button class="primary-btn" style="width: 100%; font-size: 0.9rem; padding: 10px;" onclick="addNewGlobalComment()">➕ 添加整体留言</button>
+                </div>
+                <div class="global-comments-grid" id="global-comments-grid-root"></div>
+            </div>
+
+            <div class="panel-box">
+                <div class="panel-header-row">
+                    <div>
+                        <h2 style="font-size: 1.25rem; font-weight: 800; color: var(--text-main);">🌊 站点直垂波浪分支</h2>
+                        <p style="color: var(--text-muted); font-size: 0.8rem; margin-top: 2px;">左右滑动查看各大站，点击小卡片展开照片与留言</p>
+                    </div>
+                    <div>
+                        <button class="primary-btn" style="font-size: 0.9rem; padding: 10px 16px;" onclick="saveToCloud()">💾 保存修改</button>
+                    </div>
+                </div>
+
+                <!-- 横向展开、各大站下方直垂波浪线布局 -->
+                <div class="sketch-timeline-container" id="sketch-timeline-root"></div>
+            </div>
+        </div>
+
+        <!-- 视图 3：2027 计划中 页面 -->
+        <div id="view-2027" class="app-view">
+            <header>
+                <div class="nav-back-bar">
+                    <button class="back-home-btn" onclick="switchView('view-home')">← 返回主页面</button>
+                    <span style="font-weight: 800; color: #FF6B6B; font-size: 0.95rem;">🗺️ 2027 计划中</span>
+                </div>
+                <h1 class="neon-flash-title" style="background: linear-gradient(127deg, #FF6B6B, #FF8E53); font-size: 1.8rem;">2027 诗与远方 🌟</h1>
+                <p>未来的美好，我们一起去探索与创造！</p>
+            </header>
+
+            <div class="panel-box" style="text-align: center; padding: 40px 15px;">
+                <div style="font-size: 3.5rem; margin-bottom: 15px;">⛺✈️🚂</div>
+                <h2 style="font-size: 1.5rem; font-weight: 900; color: var(--text-main); margin-bottom: 10px;">新的旅程正在筹备中...</h2>
+                <p style="color: var(--text-muted); font-size: 0.95rem; max-width: 600px; margin: 0 auto 25px auto; line-height: 1.6;">
+                    大家可以在这里随时提出想去的地方、收集心仪的风景和目的地。等2026四川行圆满落幕后，我们将在这里开启2027的新篇章！
+                </p>
+                <button class="primary-btn" style="background: var(--primary-gradient); width: 100%;" onclick="alert('即将开放2027目的地投票与规划功能，敬请期待！')">💡 提出我的2027心愿</button>
+            </div>
+        </div>
+
     </div>
 
     <script>
@@ -357,54 +496,17 @@
         ];
 
         let milestonesDataCache = [];
+        let globalCommentsCache = [];
+        let currentEditingGlobalIndex = null;
+
         let currentEditingMIdx = null;
         let currentEditingSIdx = null;
         let draggedSubItem = null;
 
-        function getStationTheme(place) {
-            if (place.includes('成都')) {
-                return {
-                    gradient: 'linear-gradient(135deg, #1b5e20 0%, #4caf50 100%)',
-                    accent: '#2e7d32',
-                    icon: '🎋'
-                };
-            } else if (place.includes('九寨沟')) {
-                return {
-                    gradient: 'linear-gradient(135deg, #01579b 0%, #00bcd4 100%)',
-                    accent: '#00838f',
-                    icon: '🏞️'
-                };
-            } else if (place.includes('都江堰')) {
-                return {
-                    gradient: 'linear-gradient(135deg, #006064 0%, #26a69a 100%)',
-                    accent: '#00897b',
-                    icon: '🌊'
-                };
-            } else if (place.includes('乐山')) {
-                return {
-                    gradient: 'linear-gradient(135deg, #880e4f 0%, #d81b60 100%)',
-                    accent: '#ad1457',
-                    icon: '🗿'
-                };
-            } else if (place.includes('重庆')) {
-                return {
-                    gradient: 'linear-gradient(135deg, #b71c1c 0%, #ff5722 100%)',
-                    accent: '#c62828',
-                    icon: '🌶️'
-                };
-            } else {
-                return {
-                    gradient: 'linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%)',
-                    accent: '#FF6B6B',
-                    icon: '✈️'
-                };
-            }
-        }
-
         function checkPassword() {
             if (document.getElementById("password-input").value === CORRECT_PASSWORD) {
                 document.getElementById("auth-overlay").style.display = "none";
-                document.getElementById("main-content").style.display = "block";
+                document.getElementById("main-app").style.display = "flex";
                 loadCloudData();
             } else {
                 document.getElementById("error-msg").style.display = "block";
@@ -414,6 +516,28 @@
         document.getElementById("password-input").addEventListener("keypress", (e) => {
             if (e.key === 'Enter') checkPassword();
         });
+
+        function switchView(viewId) {
+            document.querySelectorAll('.app-view').forEach(v => v.classList.remove('active-view'));
+            document.getElementById(viewId).classList.add('active-view');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function getStationTheme(place) {
+            if (place.includes('成都')) {
+                return { gradient: 'linear-gradient(135deg, #1b5e20 0%, #4caf50 100%)', accent: '#2e7d32', icon: '🎋' };
+            } else if (place.includes('九寨沟')) {
+                return { gradient: 'linear-gradient(135deg, #01579b 0%, #00bcd4 100%)', accent: '#00838f', icon: '🏞️' };
+            } else if (place.includes('都江堰')) {
+                return { gradient: 'linear-gradient(135deg, #006064 0%, #26a69a 100%)', accent: '#00897b', icon: '🌊' };
+            } else if (place.includes('乐山')) {
+                return { gradient: 'linear-gradient(135deg, #880e4f 0%, #d81b60 100%)', accent: '#ad1457', icon: '🗿' };
+            } else if (place.includes('重庆')) {
+                return { gradient: 'linear-gradient(135deg, #b71c1c 0%, #ff5722 100%)', accent: '#c62828', icon: '🌶️' };
+            } else {
+                return { gradient: 'linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%)', accent: '#FF6B6B', icon: '✈️' };
+            }
+        }
 
         function getCurrentDateTime() {
             const now = new Date();
@@ -437,19 +561,104 @@
                 });
                 if (!res.ok) return;
                 const data = await res.json();
-                if (data?.[0]?.content_data?.milestones && data[0].content_data.milestones.length > 0) {
-                    milestonesDataCache = data[0].content_data.milestones;
+                if (data?.[0]?.content_data) {
+                    const cData = data[0].content_data;
+                    milestonesDataCache = cData.milestones || JSON.parse(JSON.stringify(defaultMilestones));
+                    globalCommentsCache = cData.globalComments || [];
                 } else {
                     milestonesDataCache = JSON.parse(JSON.stringify(defaultMilestones));
+                    globalCommentsCache = [];
                 }
                 renderSketchTimeline();
+                renderGlobalComments();
             } catch (err) { 
                 console.error("加载失败", err); 
                 milestonesDataCache = JSON.parse(JSON.stringify(defaultMilestones));
+                globalCommentsCache = [];
                 renderSketchTimeline();
+                renderGlobalComments();
             }
         }
 
+        // ================= 全局旅行留言墙逻辑 =================
+        function renderGlobalComments() {
+            const container = document.getElementById('global-comments-grid-root');
+            if (!container) return;
+
+            if (globalCommentsCache.length === 0) {
+                container.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 15px; font-size: 0.85rem;">暂无整体旅行留言，点击上方按钮添加第一条吧！</div>`;
+                return;
+            }
+
+            container.innerHTML = globalCommentsCache.map((item, idx) => `
+                <div class="global-comment-mini-card" style="background: ${item.bgColor || '#ffffff'};" onclick="openGlobalCommentModal(${idx})">
+                    <div style="font-size: 0.9rem; font-weight: 700; color: var(--text-main); line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">
+                        "${item.text || '点击写下寄语...'}"
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px; font-size: 0.75rem; color: var(--text-muted); border-top: 1px dashed rgba(0,0,0,0.08); padding-top: 6px;">
+                        <span>📅 ${item.timestamp || ''}</span>
+                        <span style="font-weight: 700; color: #2e7d32;">✍️ ${item.author || '未署名'}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function addNewGlobalComment() {
+            const nowTime = getCurrentDateTime();
+            globalCommentsCache.push({
+                author: AUTHORS[0],
+                timestamp: nowTime,
+                text: "",
+                bgColor: "#ffffff"
+            });
+            renderGlobalComments();
+            openGlobalCommentModal(globalCommentsCache.length - 1);
+        }
+
+        function openGlobalCommentModal(idx) {
+            currentEditingGlobalIndex = idx;
+            const item = globalCommentsCache[idx];
+
+            const selectEl = document.getElementById('gc-author-select');
+            selectEl.innerHTML = AUTHORS.map(name => `<option value="${name}" ${item.author === name ? 'selected' : ''}>${name}</option>`).join('');
+
+            document.getElementById('gc-text-content').value = item.text || '';
+            document.getElementById('gc-timestamp-display').innerText = `留言时间：${item.timestamp || ''}`;
+
+            document.querySelectorAll('input[name="gc-bg-color"]').forEach(radio => {
+                radio.checked = (radio.value === (item.bgColor || '#ffffff'));
+            });
+
+            document.getElementById('global-comment-modal').style.display = 'flex';
+        }
+
+        function closeGlobalCommentModal() {
+            document.getElementById('global-comment-modal').style.display = 'none';
+            renderGlobalComments();
+        }
+
+        function saveGlobalCommentChanges() {
+            if (currentEditingGlobalIndex === null) return;
+            const item = globalCommentsCache[currentEditingGlobalIndex];
+
+            item.author = document.getElementById('gc-author-select').value;
+            item.text = document.getElementById('gc-text-content').value;
+            
+            const selectedBg = document.querySelector('input[name="gc-bg-color"]:checked');
+            if (selectedBg) item.bgColor = selectedBg.value;
+
+            closeGlobalCommentModal();
+        }
+
+        function deleteGlobalComment() {
+            if (currentEditingGlobalIndex === null) return;
+            if (confirm("确定要删除这条整体旅行留言吗？")) {
+                globalCommentsCache.splice(currentEditingGlobalIndex, 1);
+                closeGlobalCommentModal();
+            }
+        }
+
+        // ================= 各站点波浪分支逻辑 =================
         function promptAddSub(mIdx) {
             const input = prompt("请输入【时间】与【地点】\n格式：时间, 地点\n例如: 14:00, 宽窄巷子", "14:00, ");
             if (input === null) return;
@@ -536,7 +745,8 @@
                          ondragstart="onDragStart(event, ${mIdx}, ${sIdx})" 
                          ondragend="onDragEnd(event)" 
                          ondragover="onDragOver(event)" 
-                         ondrop="onDrop(event, ${mIdx}, ${sIdx})">
+                         ondrop="ondrop(event, ${mIdx}, ${sIdx})"
+                         onclick="openModal(${mIdx}, ${sIdx})">
                         <div style="display:flex; justify-content:space-between; align-items:center;">
                             <span style="font-size: 0.8rem; font-weight: 700; color: ${theme.accent};">${sub.date || '时间'}</span>
                             <div style="display:flex; gap:6px; align-items:center;">
@@ -545,7 +755,7 @@
                             </div>
                         </div>
                         <div style="font-size: 0.9rem; font-weight: 700; color: var(--text-main);">📍 ${sub.place || '地点名称'}</div>
-                        <button class="detail-btn" style="color: ${theme.accent}; border-color: ${theme.accent}40;" onclick="openModal(${mIdx}, ${sIdx})">📸 照片 (${(sub.images || []).length}) · 💬 留言 (${(sub.comments || []).length})</button>
+                        <button class="detail-btn" style="color: ${theme.accent}; border-color: ${theme.accent}40;">📸 照片 (${(sub.images || []).length}) · 💬 留言 (${(sub.comments || []).length})</button>
                     </div>
                 `).join('');
 
@@ -571,7 +781,7 @@
             currentEditingMIdx = mIdx;
             currentEditingSIdx = sIdx;
             const sub = milestonesDataCache[mIdx].subMilestones[sIdx];
-            document.getElementById('modal-title').innerText = `📍 ${sub.place || '小时间点'} - 照片与留言回忆录`;
+            document.getElementById('modal-title').innerText = `📍 ${sub.place || '小时间点'} - 照片与留言`;
             renderModalContent();
             document.getElementById('detail-modal').style.display = 'flex';
         }
@@ -608,7 +818,7 @@
                         </div>
                         <button class="detail-btn" onclick="deleteModalComment(${cIdx})" style="padding:2px 6px; font-size:0.7rem; background:#fff5f5; color:#e53e3e; border-color:#fed7d7; width:auto;">×</button>
                     </div>
-                    <textarea oninput="updateModalCommentField(${cIdx}, 'text', this.value)" placeholder="写下您的感想、评价或备忘录...">${comm.text || ''}</textarea>
+                    <textarea oninput="updateModalCommentField(${cIdx}, 'text', this.value)" placeholder="写下您的感想、评价...">${comm.text || ''}</textarea>
                     <div class="comment-footer">
                         <div class="reaction-bar">
                             ${reactionLabels.map((label, rIdx) => `
@@ -699,7 +909,13 @@
                         "Content-Type": "application/json",
                         "Prefer": "resolution=merge-duplicates"
                     },
-                    body: JSON.stringify({ person_id: "sichuan_memoir_sketch_style", content_data: { milestones: milestonesDataCache } })
+                    body: JSON.stringify({ 
+                        person_id: "sichuan_memoir_sketch_style", 
+                        content_data: { 
+                            milestones: milestonesDataCache,
+                            globalComments: globalCommentsCache 
+                        } 
+                    })
                 });
 
                 if (res.ok) {
@@ -709,7 +925,7 @@
                         setTimeout(() => { tip.style.opacity = '0'; }, 2500);
                     }
                 } else {
-                    alert("保存失败，请检查网络或控制台。");
+                    alert("保存失败，请检查网络。");
                 }
             } catch (err) {
                 console.error("保存异常", err);
