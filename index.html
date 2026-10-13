@@ -553,9 +553,15 @@
                 });
                 if (!res.ok) return;
                 const data = await res.json();
+                
+                // 打印看看从云端真正读到了什么
+                console.log("从云端加载的原始数据:", data);
+
                 if (data?.[0]?.content_data) {
                     const cData = data[0].content_data;
                     milestonesDataCache = cData.milestones || JSON.parse(JSON.stringify(defaultMilestones));
+                    
+                    // 确保云端读出来的 globalComments 正常赋值
                     globalCommentsCache = cData.globalComments || [];
                 } else {
                     milestonesDataCache = JSON.parse(JSON.stringify(defaultMilestones));
@@ -569,7 +575,7 @@
                 globalCommentsCache = [];
                 renderSketchTimeline();
                 renderGlobalComments();
-            }
+            }        
         }
 
         // 全局旅行留言墙逻辑
