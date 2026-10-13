@@ -3,23 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>下一站 遇见美好 - 5人旅行空间</title>
+    <title>下一站 遇见美好 - 四川重庆行动感波浪足迹</title>
     <style>
         :root {
             --bg-gradient: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
-            --card-bg: rgba(255, 255, 255, 0.92);
+            --card-bg: rgba(255, 255, 255, 0.95);
             --text-main: #2d3748;
             --text-muted: #718096;
             --shadow-card: 0 15px 35px rgba(0, 0, 0, 0.06), 0 5px 15px rgba(0, 0, 0, 0.04);
-            --shadow-hover: 0 20px 40px rgba(255, 107, 107, 0.15);
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
 
         body {
             background: var(--bg-gradient);
@@ -30,12 +24,7 @@
             flex-direction: column;
             align-items: center;
             background-attachment: fixed;
-        }
-
-        @keyframes colorFlowAndFlash {
-            0% { background-position: 0% 50%; opacity: 0.85; filter: drop-shadow(0 0 10px rgba(255, 107, 107, 0.4)); }
-            50% { background-position: 100% 50%; opacity: 1; filter: drop-shadow(0 0 20px rgba(102, 126, 234, 0.6)); }
-            100% { background-position: 0% 50%; opacity: 0.85; filter: drop-shadow(0 0 10px rgba(255, 107, 107, 0.4)); }
+            overflow-x: hidden;
         }
 
         .neon-flash-title {
@@ -43,324 +32,249 @@
             background-size: 400% 400%;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            animation: colorFlowAndFlash 6s ease infinite;
-            font-size: 2.5rem;
-            font-weight: 900;
-            letter-spacing: 1px;
+            font-size: 2.3rem; font-weight: 900; letter-spacing: 1px; text-align: center;
         }
 
-        #auth-overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(15, 23, 42, 0.65);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
+        /* 顶部波浪游动照片动效区（显著加大，照顾长辈视力） */
+        .wave-floating-banner {
+            width: 100%;
+            max-width: 650px;
+            height: 130px;
+            position: relative;
             display: flex;
             justify-content: center;
             align-items: center;
-            z-index: 9999;
+            margin: 15px 0 25px 0;
+            pointer-events: none;
+        }
+        .floating-photo-wrapper {
+            position: absolute;
+            width: 120px; /* 初始尺寸放大到 120px */
+            height: 120px;
+            border-radius: 50%;
+            border: 4px solid #fff;
+            box-shadow: 0 10px 30px rgba(255, 107, 107, 0.45);
+            overflow: hidden;
+            background: #fff;
+            cursor: pointer;
+            pointer-events: auto;
+            animation: waveMotion 9s ease-in-out infinite alternate;
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        /* 鼠标悬停时放大到 1.5 倍，方便看清细节 */
+        .floating-photo-wrapper:hover {
+            transform: scale(1.5) !important;
+            z-index: 100;
+            box-shadow: 0 15px 40px rgba(255, 107, 107, 0.6);
+        }
+        .floating-photo-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .floating-tip {
+            position: absolute;
+            bottom: -22px;
+            font-size: 0.8rem;
+            color: #2d3748;
+            font-weight: 700;
+            background: rgba(255,255,255,0.9);
+            padding: 2px 10px;
+            border-radius: 12px;
+            white-space: nowrap;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+
+        @keyframes waveMotion {
+            0% {
+                transform: translateX(-140px) translateY(0px) rotate(-4deg);
+            }
+            25% {
+                transform: translateX(-70px) translateY(-12px) rotate(3deg);
+            }
+            50% {
+                transform: translateX(0px) translateY(0px) rotate(0deg);
+            }
+            75% {
+                transform: translateX(70px) translateY(12px) rotate(-3deg);
+            }
+            100% {
+                transform: translateX(140px) translateY(0px) rotate(4deg);
+            }
+        }
+
+        #auth-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.65); backdrop-filter: blur(16px);
+            display: flex; justify-content: center; align-items: center; z-index: 9999;
         }
 
         .auth-box {
-            background: rgba(255, 255, 255, 0.98);
-            padding: 45px 35px;
-            border-radius: 28px;
-            text-align: center;
-            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.3);
-            width: 90%;
-            max-width: 400px;
-            border: 1px solid rgba(255, 255, 255, 0.8);
-        }
-
-        .auth-box .sub-title {
-            color: var(--text-muted);
-            font-size: 1.05rem;
-            margin-bottom: 25px;
-            font-weight: 600;
+            background: rgba(255, 255, 255, 0.98); padding: 45px 35px; border-radius: 28px;
+            text-align: center; box-shadow: 0 25px 60px rgba(0, 0, 0, 0.3); width: 90%; max-width: 400px;
         }
 
         .auth-box input {
-            width: 100%;
-            padding: 15px;
-            margin-bottom: 18px;
-            border: 2px solid #e2e8f0;
-            border-radius: 14px;
-            font-size: 1.3rem;
-            outline: none;
-            text-align: center;
-            letter-spacing: 10px;
-            background: #f8fafc;
-            color: #1a202c;
+            width: 100%; padding: 15px; margin-bottom: 18px; border: 2px solid #e2e8f0;
+            border-radius: 14px; font-size: 1.3rem; text-align: center; letter-spacing: 10px; background: #f8fafc;
         }
 
         .auth-box button {
-            width: 100%;
-            padding: 15px;
-            background: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%);
-            color: white;
-            border: none;
-            border-radius: 14px;
-            font-size: 1.1rem;
-            font-weight: bold;
-            cursor: pointer;
-            box-shadow: 0 8px 20px rgba(255, 107, 107, 0.35);
+            width: 100%; padding: 15px; background: linear-gradient(135deg, #2e7d32 0%, #4caf50 100%); color: white;
+            border: none; border-radius: 14px; font-size: 1.1rem; font-weight: bold; cursor: pointer;
         }
 
-        .error-tip {
-            color: #e53e3e;
-            font-size: 0.9rem;
-            margin-top: 15px;
-            display: none;
-            font-weight: 600;
-        }
+        .error-tip { color: #e53e3e; font-size: 0.9rem; margin-top: 15px; display: none; font-weight: 600; }
 
-        .container {
-            width: 100%;
-            max-width: 850px;
-            display: none;
-            animation: fadeIn 0.6s ease;
-        }
+        .container { width: 100%; max-width: 1250px; display: none; }
+        header { text-align: center; margin-bottom: 25px; }
+        header p { color: var(--text-muted); font-size: 1.1rem; margin-top: 10px; font-weight: 500; }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        header {
-            text-align: center;
-            margin-bottom: 45px;
-        }
-
-        header p {
-            color: var(--text-muted);
-            font-size: 1.1rem;
-            font-weight: 500;
-            margin-top: 10px;
-        }
-
-        .view-section { display: none; }
-        .view-section.active { display: block; animation: fadeIn 0.4s ease; }
-
-        .trip-grid {
-            display: grid;
-            gap: 25px;
-            grid-template-columns: repeat(auto-fill, minmax(100%, 1fr));
-        }
-
-        .trip-card-item {
-            background: var(--card-bg);
-            backdrop-filter: blur(10px);
-            border-radius: 24px;
-            padding: 35px;
-            box-shadow: var(--shadow-card);
-            border: 1px solid rgba(255, 255, 255, 0.8);
-            cursor: pointer;
-            transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .trip-card-item::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; width: 8px; height: 100%;
-            background: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%);
-        }
-
-        .trip-card-item:hover {
-            transform: translateY(-6px);
-            box-shadow: var(--shadow-hover);
-            border-color: rgba(255, 107, 107, 0.4);
-        }
-
-        .trip-info h3 { font-size: 1.6rem; color: var(--text-main); margin-bottom: 8px; font-weight: 700; }
-        .trip-info p { color: var(--text-muted); font-size: 1rem; }
-
-        .trip-badge {
-            background: #fff5f5;
-            color: #FF6B6B;
-            padding: 10px 20px;
-            border-radius: 30px;
-            font-size: 0.95rem;
-            font-weight: bold;
-            transition: all 0.3s;
-        }
-
-        .trip-card-item:hover .trip-badge {
-            background: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%);
-            color: white;
-            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
-        }
-
-        .back-btn {
-            background: rgba(255, 255, 255, 0.9);
-            border: 1px solid #cbd5e0;
-            padding: 10px 20px;
-            border-radius: 12px;
-            color: #4a5568;
-            font-weight: bold;
-            cursor: pointer;
-            margin-bottom: 25px;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .back-btn:hover {
-            background: #ffffff;
-            color: #FF6B6B;
-            border-color: #FF6B6B;
-        }
-
-        .detail-header { text-align: center; margin-bottom: 30px; }
-        .detail-header h2 { font-size: 2.2rem; color: var(--text-main); font-weight: 800; margin-bottom: 8px; }
-        .detail-header p { color: var(--text-muted); font-size: 1rem; }
-
-        .quick-nav {
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(12px);
-            padding: 15px 22px;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.06);
-            margin-bottom: 35px;
-            display: flex;
-            gap: 12px;
-            overflow-x: auto;
-            position: sticky;
-            top: 20px;
-            z-index: 10;
-            border: 1px solid rgba(255, 255, 255, 0.9);
-        }
-        .quick-nav::-webkit-scrollbar { display: none; }
-        .quick-nav-label { font-size: 0.95rem; font-weight: 700; color: var(--text-muted); display: flex; align-items: center; white-space: nowrap; }
-
-        .nav-chip {
-            background: #f1f5f9;
-            border: 1px solid #e2e8f0;
-            padding: 8px 18px;
-            border-radius: 30px;
-            font-size: 0.95rem;
-            color: var(--text-main);
-            cursor: pointer;
-            white-space: nowrap;
-            text-decoration: none;
-            font-weight: 600;
-        }
-        .nav-chip:hover { background: #fff5f5; border-color: #FF6B6B; color: #FF6B6B; }
-
-        .person-card {
-            background: var(--card-bg);
-            backdrop-filter: blur(10px);
-            border-radius: 24px;
-            padding: 35px;
+        .panel-box {
+            background: var(--card-bg); border-radius: 24px; padding: 30px;
+            box-shadow: var(--shadow-card); border: 1px solid rgba(255,255,255,0.8);
             margin-bottom: 30px;
-            box-shadow: var(--shadow-card);
-            border-left: 8px solid #FF6B6B;
-            scroll-margin-top: 100px;
-            border: 1px solid rgba(255, 255, 255, 0.8);
         }
 
-        .person-card h3 {
-            font-size: 1.4rem;
-            margin-bottom: 22px;
-            color: var(--text-main);
-            border-bottom: 2px solid #edf2f7;
-            padding-bottom: 14px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-weight: 700;
+        .panel-header-row {
+            display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; flex-wrap: wrap; gap: 15px;
         }
 
-        .section-block { margin-bottom: 20px; }
-        .section-block label { font-size: 0.95rem; font-weight: 700; color: #4a5568; display: block; margin-bottom: 8px; }
-
-        textarea {
-            width: 100%;
-            height: 75px;
-            padding: 14px;
-            border: 1.5px solid #cbd5e0;
-            border-radius: 14px;
-            resize: vertical;
-            font-size: 1rem;
-            outline: none;
-            background: #f8fafc;
-            color: #1a202c;
+        /* 横向展开列 + 各站直垂波浪线布局 */
+        .sketch-timeline-container {
+            display: flex; gap: 25px; overflow-x: auto; padding: 20px 10px;
         }
-        textarea:focus { border-color: #FF6B6B; background: #ffffff; box-shadow: 0 0 0 4px rgba(255, 107, 107, 0.12); }
+        .sketch-timeline-container::-webkit-scrollbar { height: 8px; }
+        .sketch-timeline-container::-webkit-scrollbar-thumb { background: #cbd5e0; border-radius: 4px; }
 
-        .photo-upload-area { margin-top: 10px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+        /* 每个站点的垂直分支列 */
+        .station-column {
+            min-width: 250px; flex: 1; display: flex; flex-direction: column; align-items: center; position: relative;
+        }
+
+        /* 站点大圆点及名称 */
+        .station-node-header {
+            display: flex; flex-direction: column; align-items: center; 
+            border-radius: 20px; padding: 18px 12px; width: 100%; 
+            box-shadow: 0 6px 20px rgba(0,0,0,0.08); z-index: 2; color: white;
+            transition: transform 0.2s;
+        }
+        .station-node-header:hover { transform: translateY(-3px); }
+
+        .station-dot {
+            width: 38px; height: 38px; background: #fff; border-radius: 50%;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15); margin-bottom: 8px;
+            display: flex; align-items: center; justify-content: center; font-size: 0.9rem; font-weight: bold;
+        }
+        .station-title { font-size: 1rem; font-weight: 900; text-align: center; text-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+        .station-icon { font-size: 1.4rem; margin-bottom: 4px; }
+
+        /* 从站点垂直向下延伸的波浪线区域 */
+        .vertical-wave-branch {
+            position: relative; width: 100%; min-height: 250px; padding: 25px 10px 20px 10px;
+            display: flex; flex-direction: column; gap: 12px; align-items: center;
+        }
+        .vertical-wave-svg {
+            position: absolute; top: 0; bottom: 0; left: 50%; transform: translateX(-50%); width: 40px; pointer-events: none; z-index: 1;
+        }
+
+        /* 小时间点卡片（支持鼠标拖拽排序） */
+        .sub-event-node {
+            background: #fff; border: 1.5px solid #cbd5e0; border-radius: 12px; padding: 12px 14px;
+            width: 100%; box-shadow: 0 2px 8px rgba(0,0,0,0.03); z-index: 2; position: relative;
+            display: flex; flex-direction: column; gap: 8px; transition: all 0.2s; cursor: grab;
+        }
+        .sub-event-node:active { cursor: grabbing; }
+        .sub-event-node.dragging { opacity: 0.4; border: 2px dashed #718096; }
+        .sub-event-node:hover { box-shadow: 0 6px 15px rgba(0,0,0,0.08); }
+        .sub-event-node::before {
+            content: ''; position: absolute; left: -16px; top: 50%; transform: translateY(-50%); width: 10px; height: 10px;
+            background: #fff; border: 2.5px solid currentColor; border-radius: 50%;
+        }
+
+        .primary-btn {
+            background: linear-gradient(135deg, #2e7d32 0%, #4caf50 100%); color: white; border: none;
+            padding: 10px 20px; border-radius: 12px; font-size: 0.95rem; font-weight: bold;
+            cursor: pointer; box-shadow: 0 4px 15px rgba(46, 125, 50, 0.35); display: inline-flex; align-items: center; gap: 6px;
+        }
+
+        .detail-btn {
+            background: #f8fafc; border: 1.5px solid #cbd5e0;
+            padding: 5px 10px; border-radius: 8px; font-size: 0.8rem; font-weight: bold; cursor: pointer; width: 100%; text-align: center;
+            transition: all 0.2s;
+        }
+
+        /* 手动添加小时间点按钮 */
+        .add-sub-inline-btn {
+            background: #fff; border: 1.5px dashed currentColor;
+            padding: 8px 12px; border-radius: 10px; font-size: 0.85rem; font-weight: bold;
+            cursor: pointer; width: 100%; text-align: center; z-index: 2; margin-top: 5px;
+            transition: all 0.2s;
+        }
+        .add-sub-inline-btn:hover { background: rgba(255,255,255,0.8); box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+
+        /* 弹窗：折叠内容的展开区域（照片与留言互动） */
+        #detail-modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.65); backdrop-filter: blur(10px);
+            display: none; justify-content: center; align-items: center; z-index: 9999; padding: 20px;
+        }
+        .modal-content-box {
+            background: #fff; width: 100%; max-width: 650px; border-radius: 24px; padding: 30px;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.3); max-height: 90vh; overflow-y: auto;
+        }
+
+        .photo-section {
+            background: #f8fafc; border: 1.5px dashed #cbd5e0; border-radius: 14px;
+            padding: 15px; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+        }
         .upload-btn {
-            background: #edf2f7; color: #4a5568; padding: 7px 16px; border-radius: 10px;
-            font-size: 0.85rem; cursor: pointer; border: 1.5px dashed #a0aec0; font-weight: 600;
+            background: #edf2f7; color: #4a5568; padding: 8px 14px; border-radius: 10px;
+            font-size: 0.85rem; cursor: pointer; border: 1.5px dashed #a0aec0; font-weight: 600; display: inline-flex; align-items: center; gap: 6px;
         }
-        .upload-btn:hover { background: #e2e8f0; color: #1a202c; }
         .hidden-file-input { display: none; }
-        .photo-preview-container { display: flex; gap: 10px; flex-wrap: wrap; }
-
+        .photo-preview-container { display: flex; gap: 8px; flex-wrap: wrap; }
         .thumb-wrapper { position: relative; width: 65px; height: 65px; }
-        .thumb { width: 100%; height: 100%; object-fit: cover; border-radius: 12px; border: 2px solid #ffffff; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-        .delete-btn {
+        .thumb { width: 100%; height: 100%; object-fit: cover; border-radius: 10px; border: 2px solid #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
+        .delete-img-btn {
             position: absolute; top: -6px; right: -6px; background: #e53e3e; color: white;
-            border: none; width: 20px; height: 20px; border-radius: 50%; font-size: 12px;
+            border: none; width: 18px; height: 18px; border-radius: 50%; font-size: 11px;
             font-weight: bold; display: flex; justify-content: center; align-items: center; cursor: pointer;
         }
 
-        .card-footer {
-            margin-top: 25px;
-            padding-top: 18px;
-            border-top: 1.5px dashed #edf2f7;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 15px;
+        .comment-card {
+            background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 12px;
+            padding: 12px; margin-bottom: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.02);
         }
-
-        .reaction-bar { display: flex; gap: 10px; flex-wrap: wrap; }
+        .comment-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 6px; }
+        .author-select {
+            padding: 4px 8px; border: 1.5px solid #cbd5e0; border-radius: 8px;
+            font-size: 0.85rem; background: #fff; font-weight: 600; outline: none;
+        }
+        textarea {
+            width: 100%; height: 60px; padding: 8px; border: 1.5px solid #cbd5e0;
+            border-radius: 8px; resize: vertical; font-size: 0.9rem; background: #fff; outline: none; color: var(--text-main);
+        }
+        textarea:focus { border-color: #4caf50; }
+        .comment-footer {
+            margin-top: 8px; padding-top: 6px; border-top: 1px dashed #edf2f7;
+            display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px;
+        }
+        .reaction-bar { display: flex; gap: 6px; flex-wrap: wrap; }
         .reaction-btn {
-            background: #f8fafc; border: 1.5px solid #e2e8f0; padding: 6px 14px; border-radius: 30px;
-            font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; gap: 4px; font-weight: 600; color: #475569;
+            background: #fff; border: 1.5px solid #e2e8f0; padding: 4px 10px; border-radius: 20px;
+            font-size: 0.75rem; cursor: pointer; display: flex; align-items: center; gap: 4px; font-weight: 600; color: #475569;
         }
-        .reaction-btn.active { background: #fff5f5; border-color: #FF6B6B; color: #FF6B6B; box-shadow: 0 4px 12px rgba(255, 107, 107, 0.2); }
+        .reaction-btn.active { background: #fff5f5; color: #e53e3e; }
 
-        .action-area {
-            display: flex;
-            align-items: center;
-            gap: 10px;
+        .add-comment-btn {
+            background: #edf2f7; color: #4a5568; border: 1.5px dashed #cbd5e0;
+            padding: 10px; border-radius: 12px; font-size: 0.9rem; font-weight: bold;
+            cursor: pointer; width: 100%; margin-top: 12px; text-align: center;
         }
+        .add-comment-btn:hover { background: #e2e8f0; }
 
-        .save-btn {
-            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
-            color: white;
-            border: none;
-            padding: 10px 22px;
-            border-radius: 14px;
-            font-size: 0.95rem;
-            font-weight: bold;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(72, 187, 120, 0.35);
-            transition: all 0.2s;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .save-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(72, 187, 120, 0.5);
-        }
-
-        .save-tip {
-            font-size: 0.85rem;
-            color: #38a169;
-            font-weight: bold;
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
+        .save-tip { font-size: 0.85rem; color: #38a169; font-weight: bold; opacity: 0; transition: opacity 0.3s; }
     </style>
 </head>
 <body>
@@ -368,74 +282,62 @@
     <div id="auth-overlay">
         <div class="auth-box">
             <h2 class="neon-flash-title" style="font-size: 1.8rem;">下一站 遇见美好</h2>
-            <div class="sub-title" style="margin-top: 8px;">5人专属私密空间</div>
-            <p style="color: #718096; font-size: 0.9rem; margin-bottom: 25px;">请输入 4 位专属访问密码</p>
+            <div style="color: #718096; font-size: 0.95rem; margin: 10px 0 20px 0; font-weight: 600;">5人专属私密空间</div>
             <input type="password" id="password-input" maxlength="4" placeholder="••••">
             <button onclick="checkPassword()">开启回忆空间</button>
             <div id="error-msg" class="error-tip">密码不正确，请重新输入</div>
         </div>
     </div>
 
+    <!-- 弹窗：折叠内容的展开区域（照片与留言互动） -->
+    <div id="detail-modal">
+        <div class="modal-content-box">
+            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid #edf2f7; padding-bottom:12px; margin-bottom:20px;">
+                <h3 id="modal-title" style="font-size: 1.3rem; font-weight: 900; color: var(--text-main);">📸 照片与留言回忆录</h3>
+                <button class="detail-btn" onclick="closeModal()" style="background:#fff5f5; color:#e53e3e; border-color:#fed7d7; width:auto;">关闭 ×</button>
+            </div>
+            <div class="photo-section">
+                <label class="upload-btn">➕ 上传现场照片<input type="file" class="hidden-file-input" accept="image/*" onchange="handleModalImageUpload(this)"></label>
+                <div class="photo-preview-container" id="modal-photo-preview"></div>
+            </div>
+            <div>
+                <div style="font-size: 0.85rem; font-weight: 700; color: var(--text-muted); margin-bottom: 8px;">💬 5人专属评价与互动墙：</div>
+                <div id="modal-comments-container"></div>
+                <button class="add-comment-btn" onclick="addModalComment()">➕ 添加新评价/感想</button>
+            </div>
+            <button class="primary-btn" style="width:100%; margin-top:20px; justify-content:center;" onclick="closeModal()">保存并返回主画面</button>
+        </div>
+    </div>
+
     <div class="container" id="main-content">
         <header>
             <h1 class="neon-flash-title">下一站 遇见美好 ✈️</h1>
-            <p>5人旅行回忆纪录墙 ── 记录走过的足迹，共赴明年的山海之约</p>
-        </header>
-
-        <div id="view-home" class="view-section active">
-            <div class="trip-grid">
-                <div class="trip-card-item" onclick="switchView('view-sichuan')">
-                    <div class="trip-info">
-                        <h3>🏔️ 四川行</h3>
-                        <p>林姐、赵妹、树林、狗子、肥美的5人行足迹回忆录与感悟墙</p>
-                    </div>
-                    <span class="trip-badge">进入空间 →</span>
+            <p>四川重庆行全景足迹 ── 主画面清爽干净，各站独特色彩风情</p>
+            
+            <!-- 顶部波浪游动照片动效区（超大尺寸，照顾长辈视力，鼠标悬停时进一步放大） -->
+            <div class="wave-floating-banner">
+                <div class="floating-photo-wrapper" id="floating-banner-photo" onclick="document.getElementById('banner-file-input').click()" title="点击更换波浪游动照片">
+                    <img id="banner-img-element" src="https://images.unsplash.com/photo-1506744038136-46273834b3fb" alt="旅途风光">
+                    <input type="file" id="banner-file-input" class="hidden-file-input" accept="image/*" onchange="handleBannerPhotoUpload(this)">
+                    <div class="floating-tip">✨ 点击换图 / 悬停放大</div>
                 </div>
             </div>
-        </div>
+        </header>
 
-        <div id="view-sichuan" class="view-section">
-            <button class="back-btn" onclick="switchView('view-home')">← 返回主页面</button>
-
-            <div class="detail-header">
-                <h2>🏔️ 四川行</h2>
-                <p>5人专属回忆与感悟墙</p>
+        <div class="panel-box">
+            <div class="panel-header-row">
+                <div>
+                    <h2 style="font-size: 1.5rem; font-weight: 800; color: var(--text-main);">🌊 站点直垂波浪分支总览</h2>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 4px;">支持拖拽排序、修改删除，点击小卡片按钮展开照片与留言</p>
+                </div>
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <span id="global-save-tip" class="save-tip">✓ 云端保存成功！</span>
+                    <button class="primary-btn" onclick="saveToCloud()">💾 保存修改</button>
+                </div>
             </div>
 
-            <div class="quick-nav">
-                <span class="quick-nav-label">📍 快速跳转：</span>
-                <a href="#person-lin" class="nav-chip">👤 林姐</a>
-                <a href="#person-zhao" class="nav-chip">👤 赵妹</a>
-                <a href="#person-shulin" class="nav-chip">👤 树林</a>
-                <a href="#person-gouzi" class="nav-chip">👤 狗子</a>
-                <a href="#person-feimei" class="nav-chip">👤 肥美</a>
-            </div>
-
-            <div class="person-card" id="person-lin" data-person="lin">
-                <h3>👤 林姐 的旅行空间</h3>
-                ${renderPersonContent()}
-            </div>
-
-            <div class="person-card" id="person-zhao" data-person="zhao">
-                <h3>👤 赵妹 的旅行空间</h3>
-                ${renderPersonContent()}
-            </div>
-
-            <div class="person-card" id="person-shulin" data-person="shulin">
-                <h3>👤 树林 的旅行空间</h3>
-                ${renderPersonContent()}
-            </div>
-
-            <div class="person-card" id="person-gouzi" data-person="gouzi">
-                <h3>👤 狗子 的旅行空间</h3>
-                ${renderPersonContent()}
-            </div>
-
-            <div class="person-card" id="person-feimei" data-person="feimei">
-                <h3>👤 肥美 的旅行空间</h3>
-                ${renderPersonContent()}
-            </div>
-
+            <!-- 横向展开、各大站下方直垂波浪线布局 -->
+            <div class="sketch-timeline-container" id="sketch-timeline-root"></div>
         </div>
     </div>
 
@@ -443,293 +345,377 @@
         const SUPABASE_URL = "https://eyqiiurqccydjnfkyskd.supabase.co";
         const SUPABASE_ANON_KEY = "sb_publishable_1eGLF31m-1KAyCJp2DEwGg_7mqCLlRQ";
         const CORRECT_PASSWORD = "0815";
+        const AUTHORS = ["林姐", "赵妹", "树林", "狗子", "肥美"];
 
-        let cloudDataCache = {};
+        const defaultMilestones = [
+            { date: "9/18", place: "成都", subMilestones: [] },
+            { date: "9/19 - 9/21", place: "九寨沟", subMilestones: [] },
+            { date: "9/21 - 9/22", place: "成都", subMilestones: [] },
+            { date: "9/23", place: "都江堰", subMilestones: [] },
+            { date: "9/24", place: "乐山", subMilestones: [] },
+            { date: "9/25 - 9/27", place: "重庆", subMilestones: [] }
+        ];
+
+        let milestonesDataCache = [];
+        let currentEditingMIdx = null;
+        let currentEditingSIdx = null;
+        let draggedSubItem = null;
+
+        function getStationTheme(place) {
+            if (place.includes('成都')) {
+                return {
+                    gradient: 'linear-gradient(135deg, #1b5e20 0%, #4caf50 100%)',
+                    accent: '#2e7d32',
+                    icon: '🎋'
+                };
+            } else if (place.includes('九寨沟')) {
+                return {
+                    gradient: 'linear-gradient(135deg, #01579b 0%, #00bcd4 100%)',
+                    accent: '#00838f',
+                    icon: '🏞️'
+                };
+            } else if (place.includes('都江堰')) {
+                return {
+                    gradient: 'linear-gradient(135deg, #006064 0%, #26a69a 100%)',
+                    accent: '#00897b',
+                    icon: '🌊'
+                };
+            } else if (place.includes('乐山')) {
+                return {
+                    gradient: 'linear-gradient(135deg, #880e4f 0%, #d81b60 100%)',
+                    accent: '#ad1457',
+                    icon: '🗿'
+                };
+            } else if (place.includes('重庆')) {
+                return {
+                    gradient: 'linear-gradient(135deg, #b71c1c 0%, #ff5722 100%)',
+                    accent: '#c62828',
+                    icon: '🌶️'
+                };
+            } else {
+                return {
+                    gradient: 'linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%)',
+                    accent: '#FF6B6B',
+                    icon: '✈️'
+                };
+            }
+        }
 
         function checkPassword() {
-            const inputVal = document.getElementById("password-input").value;
-            const errorTip = document.getElementById("error-msg");
-
-            if (inputVal === CORRECT_PASSWORD) {
+            if (document.getElementById("password-input").value === CORRECT_PASSWORD) {
                 document.getElementById("auth-overlay").style.display = "none";
                 document.getElementById("main-content").style.display = "block";
                 loadCloudData();
             } else {
-                errorTip.style.display = "block";
+                document.getElementById("error-msg").style.display = "block";
             }
         }
 
-        document.getElementById("password-input").addEventListener("keypress", function(e) {
+        document.getElementById("password-input").addEventListener("keypress", (e) => {
             if (e.key === 'Enter') checkPassword();
         });
 
-        function switchView(viewId) {
-            document.querySelectorAll('.view-section').forEach(section => section.classList.remove('active'));
-            document.getElementById(viewId).classList.add('active');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+        function getCurrentDateTime() {
+            const now = new Date();
+            return `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
         }
 
-        function renderPersonContent() {
-            return `
-                <div class="section-block" data-field="0">
-                    <label>🏞️ 流连忘返的风景</label>
-                    <textarea class="saved-textarea" placeholder="分享最让你流连忘返的风景..."></textarea>
-                    <div class="photo-upload-area">
-                        <label class="upload-btn">➕ 上传照片<input type="file" class="hidden-file-input" accept="image/*" onchange="handleImageUpload(this)"></label>
-                        <div class="photo-preview-container"></div>
-                    </div>
-                </div>
-                <div class="section-block" data-field="1">
-                    <label>🍲 垂涎欲滴的美食</label>
-                    <textarea class="saved-textarea" placeholder="分享让你垂涎欲滴的美食..."></textarea>
-                    <div class="photo-upload-area">
-                        <label class="upload-btn">➕ 上传照片<input type="file" class="hidden-file-input" accept="image/*" onchange="handleImageUpload(this)"></label>
-                        <div class="photo-preview-container"></div>
-                    </div>
-                </div>
-                <div class="section-block" data-field="2">
-                    <label>💡 记忆犹新的事物</label>
-                    <textarea class="saved-textarea" placeholder="分享旅途中记忆犹新的人或事..."></textarea>
-                    <div class="photo-upload-area">
-                        <label class="upload-btn">➕ 上传照片<input type="file" class="hidden-file-input" accept="image/*" onchange="handleImageUpload(this)"></label>
-                        <div class="photo-preview-container"></div>
-                    </div>
-                </div>
-                <div class="section-block" data-field="3">
-                    <label>✍️ 所感所受</label>
-                    <textarea class="saved-textarea" placeholder="写下这次旅行内心的所感所受..."></textarea>
-                    <div class="photo-upload-area">
-                        <label class="upload-btn">➕ 上传照片<input type="file" class="hidden-file-input" accept="image/*" onchange="handleImageUpload(this)"></label>
-                        <div class="photo-preview-container"></div>
-                    </div>
-                </div>
-                <div class="card-footer">
-                    <div class="reaction-bar">
-                        <button class="reaction-btn" onclick="toggleReaction(this, 0)">👍 <span class="count">0</span></button>
-                        <button class="reaction-btn" onclick="toggleReaction(this, 1)">😆 <span class="count">0</span></button>
-                        <button class="reaction-btn" onclick="toggleReaction(this, 2)">😲 <span class="count">0</span></button>
-                        <button class="reaction-btn" onclick="toggleReaction(this, 3)">🤝 <span class="count">0</span></button>
-                    </div>
-                    <div class="action-area">
-                        <span class="save-tip">✓ 保存成功！</span>
-                        <button class="save-btn" onclick="manualSave(this)">💾 保存内容</button>
-                    </div>
-                </div>
-            `;
-        }
-
-        window.addEventListener('DOMContentLoaded', () => {
-            const cards = document.querySelectorAll('.person-card');
-            cards.forEach(card => {
-                if(!card.querySelector('.section-block')) {
-                    const titleHTML = card.querySelector('h3').outerHTML;
-                    card.innerHTML = titleHTML + renderPersonContent();
-                }
-            });
-        });
-
-        async function loadCloudData() {
-            try {
-                const response = await fetch(`${SUPABASE_URL}/rest/v1/trip_posts?select=*`, {
-                    headers: {
-                        "apikey": SUPABASE_ANON_KEY,
-                        "Authorization": `Bearer ${SUPABASE_ANON_KEY}`
-                    }
-                });
-                if (!response.ok) return;
-                const data = await response.json();
-                if (!Array.isArray(data)) return;
-
-                data.forEach(row => {
-                    cloudDataCache[row.person_id] = row.content_data;
-                });
-
-                document.querySelectorAll('.person-card').forEach(card => {
-                    const personId = card.getAttribute('data-person');
-                    const content = cloudDataCache[personId];
-                    if (!content) return;
-
-                    if (content.sections) {
-                        const blocks = card.querySelectorAll('.section-block');
-                        blocks.forEach((block, idx) => {
-                            const secData = content.sections[idx];
-                            if (!secData) return;
-
-                            const textarea = block.querySelector('textarea');
-                            if (document.activeElement !== textarea) {
-                                textarea.value = secData.text || '';
-                            }
-
-                            const previewContainer = block.querySelector('.photo-preview-container');
-                            previewContainer.innerHTML = '';
-                            if (secData.images) {
-                                secData.images.forEach(src => {
-                                    appendImageElement(previewContainer, src);
-                                });
-                            }
-                        });
-                    }
-
-                    if (content.reactions) {
-                        const reactionBtns = card.querySelectorAll('.reaction-btn');
-                        content.reactions.forEach((rec, idx) => {
-                            if (reactionBtns[idx]) {
-                                if (rec.active) reactionBtns[idx].classList.add('active');
-                                else reactionBtns[idx].classList.remove('active');
-                                reactionBtns[idx].querySelector('.count').textContent = rec.count || '0';
-                            }
-                        });
-                    }
-                });
-            } catch (err) {
-                console.error("加载云端数据异常:", err);
-            }
-        }
-
-        // 强力保存函数：先检查数据库里有没有这个人，有则 PATCH 更新，无则 POST 插入
-        async function manualSave(btn) {
-            const card = btn.closest('.person-card');
-            const personId = card.getAttribute('data-person');
-            const sections = {};
-
-            card.querySelectorAll('.section-block').forEach((block, idx) => {
-                const textarea = block.querySelector('textarea');
-                const thumbs = [];
-                block.querySelectorAll('.thumb').forEach(img => thumbs.push(img.src));
-                sections[idx] = { text: textarea.value, images: thumbs };
-            });
-
-            const reactions = [];
-            card.querySelectorAll('.reaction-btn').forEach(btnElem => {
-                reactions.push({
-                    active: btnElem.classList.contains('active'),
-                    count: btnElem.querySelector('.count').textContent
-                });
-            });
-
-            const contentData = { sections, reactions };
-            cloudDataCache[personId] = contentData;
-
-            try {
-                // 1. 先查询该用户是否已经在云端有记录
-                const checkRes = await fetch(`${SUPABASE_URL}/rest/v1/trip_posts?person_id=eq.${personId}&select=person_id`, {
-                    headers: {
-                        "apikey": SUPABASE_ANON_KEY,
-                        "Authorization": `Bearer ${SUPABASE_ANON_KEY}`
-                    }
-                });
-                const existing = await checkRes.json();
-
-                let response;
-                if (existing && existing.length > 0) {
-                    // 2A. 如果存在，用 PATCH 更新
-                    response = await fetch(`${SUPABASE_URL}/rest/v1/trip_posts?person_id=eq.${personId}`, {
-                        method: "PATCH",
-                        headers: {
-                            "apikey": SUPABASE_ANON_KEY,
-                            "Authorization": `Bearer ${SUPABASE_ANON_KEY}`,
-                            "Content-Type": "application/json"
-                        },
-                        body: JSON.stringify({ content_data: contentData })
-                    });
-                } else {
-                    // 2B. 如果不存在，用 POST 插入
-                    response = await fetch(`${SUPABASE_URL}/rest/v1/trip_posts`, {
-                        method: "POST",
-                        headers: {
-                            "apikey": SUPABASE_ANON_KEY,
-                            "Authorization": `Bearer ${SUPABASE_ANON_KEY}`,
-                            "Content-Type": "application/json"
-                        },
-                        body: JSON.stringify({ person_id: personId, content_data: contentData })
-                    });
-                }
-
-                if (response.ok) {
-                    const tip = card.querySelector('.save-tip');
-                    tip.style.opacity = '1';
-                    setTimeout(() => {
-                        tip.style.opacity = '0';
-                    }, 2000);
-                } else {
-                    const errText = await response.text();
-                    console.error("保存失败返回:", errText);
-                    alert("保存失败，请检查网络后重试。");
-                }
-            } catch (err) {
-                console.error("云端保存异常:", err);
-                alert("保存异常，请稍后重试。");
-            }
-        }
-
-        function handleImageUpload(input) {
-            const previewContainer = input.parentElement.nextElementSibling;
+        function handleBannerPhotoUpload(input) {
             if (input.files && input.files[0]) {
                 const reader = new FileReader();
-                reader.onload = function(e) {
-                    const img = new Image();
-                    img.src = e.target.result;
-                    img.onload = function() {
-                        const canvas = document.createElement('canvas');
-                        let width = img.width;
-                        let height = img.height;
-                        const max_size = 600;
-
-                        if (width > height && width > max_size) {
-                            height *= max_size / width;
-                            width = max_size;
-                        } else if (height > max_size) {
-                            width *= max_size / height;
-                            height = max_size;
-                        }
-
-                        canvas.width = width;
-                        canvas.height = height;
-                        const ctx = canvas.getContext('2d');
-                        ctx.drawImage(img, 0, 0, width, height);
-
-                        const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.7);
-                        appendImageElement(previewContainer, compressedDataUrl);
-                        input.value = '';
-                    }
-                }
+                reader.onload = (e) => {
+                    document.getElementById('banner-img-element').src = e.target.result;
+                };
                 reader.readAsDataURL(input.files[0]);
             }
         }
 
-        function appendImageElement(container, src) {
-            const wrapper = document.createElement('div');
-            wrapper.className = 'thumb-wrapper';
-
-            const img = document.createElement('img');
-            img.src = src;
-            img.className = 'thumb';
-
-            const deleteBtn = document.createElement('button');
-            deleteBtn.className = 'delete-btn';
-            deleteBtn.innerHTML = '×';
-            deleteBtn.onclick = function() {
-                wrapper.remove();
-            };
-
-            wrapper.appendChild(img);
-            wrapper.appendChild(deleteBtn);
-            container.appendChild(wrapper);
-        }
-
-        function toggleReaction(btn, index) {
-            btn.classList.toggle('active');
-            const countSpan = btn.querySelector('.count');
-            let count = parseInt(countSpan.textContent);
-            count = btn.classList.contains('active') ? count + 1 : count - 1;
-            countSpan.textContent = count;
-        }
-
-        setInterval(() => {
-            if (document.getElementById("main-content").style.display === "block") {
-                loadCloudData();
+        async function loadCloudData() {
+            try {
+                const res = await fetch(`${SUPABASE_URL}/rest/v1/trip_posts?person_id=eq.sichuan_memoir_sketch_style&select=content_data`, {
+                    headers: { "apikey": SUPABASE_ANON_KEY, "Authorization": `Bearer ${SUPABASE_ANON_KEY}` }
+                });
+                if (!res.ok) return;
+                const data = await res.json();
+                if (data?.[0]?.content_data?.milestones && data[0].content_data.milestones.length > 0) {
+                    milestonesDataCache = data[0].content_data.milestones;
+                } else {
+                    milestonesDataCache = JSON.parse(JSON.stringify(defaultMilestones));
+                }
+                renderSketchTimeline();
+            } catch (err) { 
+                console.error("加载失败", err); 
+                milestonesDataCache = JSON.parse(JSON.stringify(defaultMilestones));
+                renderSketchTimeline();
             }
-        }, 15000);
+        }
+
+        function promptAddSub(mIdx) {
+            const input = prompt("请输入【时间】与【地点】\n格式：时间, 地点\n例如: 14:00, 宽窄巷子", "14:00, ");
+            if (input === null) return;
+            
+            const parts = input.split(/[,，]/);
+            const timeVal = parts[0] ? parts[0].trim() : "时间";
+            const placeVal = parts[1] ? parts[1].trim() : "地点名称";
+
+            if (!milestonesDataCache[mIdx].subMilestones) {
+                milestonesDataCache[mIdx].subMilestones = [];
+            }
+            milestonesDataCache[mIdx].subMilestones.push({
+                date: timeVal,
+                place: placeVal,
+                images: [],
+                comments: []
+            });
+            renderSketchTimeline();
+        }
+
+        function editSubMilestone(mIdx, sIdx, event) {
+            event.stopPropagation();
+            const sub = milestonesDataCache[mIdx].subMilestones[sIdx];
+            const input = prompt("修改【时间】与【地点】\n格式：时间, 地点", `${sub.date || ''}, ${sub.place || ''}`);
+            if (input === null) return;
+            
+            const parts = input.split(/[,，]/);
+            if (parts[0] !== undefined) sub.date = parts[0].trim();
+            if (parts[1] !== undefined) sub.place = parts[1].trim();
+            renderSketchTimeline();
+        }
+
+        function deleteSubMilestone(mIdx, sIdx, event) {
+            event.stopPropagation();
+            if (confirm("确定要删除这个小时间点吗？")) {
+                milestonesDataCache[mIdx].subMilestones.splice(sIdx, 1);
+                renderSketchTimeline();
+            }
+        }
+
+        function onDragStart(e, mIdx, sIdx) {
+            draggedSubItem = { mIdx, sIdx };
+            e.dataTransfer.effectAllowed = 'move';
+            e.currentTarget.classList.add('dragging');
+        }
+
+        function onDragEnd(e) {
+            e.currentTarget.classList.remove('dragging');
+            draggedSubItem = null;
+        }
+
+        function onDragOver(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+        }
+
+        function onDrop(e, targetMIdx, targetSIdx) {
+            e.preventDefault();
+            if (!draggedSubItem) return;
+            const sourceMIdx = draggedSubItem.mIdx;
+            const sourceSIdx = draggedSubItem.sIdx;
+
+            if (sourceMIdx !== targetMIdx) return;
+
+            const list = milestonesDataCache[targetMIdx].subMilestones;
+            const [movedItem] = list.splice(sourceSIdx, 1);
+            list.splice(targetSIdx, 0, movedItem);
+
+            renderSketchTimeline();
+        }
+
+        function renderSketchTimeline() {
+            const container = document.getElementById('sketch-timeline-root');
+            container.innerHTML = '';
+
+            milestonesDataCache.forEach((ms, mIdx) => {
+                const theme = getStationTheme(ms.place || '');
+                const col = document.createElement('div');
+                col.className = 'station-column';
+
+                let subNodesHTML = (ms.subMilestones || []).map((sub, sIdx) => `
+                    <div class="sub-event-node" draggable="true" 
+                         style="color: ${theme.accent};"
+                         ondragstart="onDragStart(event, ${mIdx}, ${sIdx})" 
+                         ondragend="onDragEnd(event)" 
+                         ondragover="onDragOver(event)" 
+                         ondrop="onDrop(event, ${mIdx}, ${sIdx})">
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <span style="font-size: 0.8rem; font-weight: 700; color: ${theme.accent};">${sub.date || '时间'}</span>
+                            <div style="display:flex; gap:6px; align-items:center;">
+                                <button onclick="editSubMilestone(${mIdx}, ${sIdx}, event)" style="background:none; border:none; color:#718096; cursor:pointer; font-size:0.85rem; font-weight:bold;" title="修改">✏️</button>
+                                <button onclick="deleteSubMilestone(${mIdx}, ${sIdx}, event)" style="background:none; border:none; color:#e53e3e; cursor:pointer; font-size:1.1rem; font-weight:bold;" title="删除">×</button>
+                            </div>
+                        </div>
+                        <div style="font-size: 0.9rem; font-weight: 700; color: var(--text-main);">📍 ${sub.place || '地点名称'}</div>
+                        <button class="detail-btn" style="color: ${theme.accent}; border-color: ${theme.accent}40;" onclick="openModal(${mIdx}, ${sIdx})">📸 照片 (${(sub.images || []).length}) · 💬 留言 (${(sub.comments || []).length})</button>
+                    </div>
+                `).join('');
+
+                col.innerHTML = `
+                    <div class="station-node-header" style="background: ${theme.gradient};">
+                        <div class="station-icon">${theme.icon}</div>
+                        <div class="station-dot" style="color: ${theme.accent};">${mIdx + 1}</div>
+                        <div class="station-title">${ms.date || ''}<br>${ms.place || ''}</div>
+                    </div>
+                    <div class="vertical-wave-branch">
+                        <svg class="vertical-wave-svg" preserveAspectRatio="none" viewBox="0 0 40 300">
+                            <path d="M 20 0 Q 0 75, 20 150 T 20 300" fill="none" stroke="${theme.accent}" stroke-dasharray="5,5" stroke-width="2.5"/>
+                        </svg>
+                        ${subNodesHTML}
+                        <button class="add-sub-inline-btn" style="color: ${theme.accent}; border-color: ${theme.accent};" onclick="promptAddSub(${mIdx})">➕ 添加时间与地点</button>
+                    </div>
+                `;
+                container.appendChild(col);
+            });
+        }
+
+        function openModal(mIdx, sIdx) {
+            currentEditingMIdx = mIdx;
+            currentEditingSIdx = sIdx;
+            const sub = milestonesDataCache[mIdx].subMilestones[sIdx];
+            document.getElementById('modal-title').innerText = `📍 ${sub.place || '小时间点'} - 照片与留言回忆录`;
+            renderModalContent();
+            document.getElementById('detail-modal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('detail-modal').style.display = 'none';
+            renderSketchTimeline();
+        }
+
+        function renderModalContent() {
+            const sub = milestonesDataCache[currentEditingMIdx].subMilestones[currentEditingSIdx];
+            
+            const preview = document.getElementById('modal-photo-preview');
+            preview.innerHTML = (sub.images || []).map((imgSrc, imgIdx) => `
+                <div class="thumb-wrapper">
+                    <img src="${imgSrc}" class="thumb">
+                    <button class="delete-img-btn" onclick="deleteModalImage(${imgIdx})">×</button>
+                </div>
+            `).join('');
+
+            const commentContainer = document.getElementById('modal-comments-container');
+            const reactionLabels = ['👍 点赞', '😆 大笑', '🤝 同意', '😲 吃惊'];
+
+            commentContainer.innerHTML = (sub.comments || []).map((comm, cIdx) => `
+                <div class="comment-card">
+                    <div class="comment-header">
+                        <div style="display: flex; gap: 6px; align-items: center; flex-wrap: wrap;">
+                            <span style="font-size: 0.75rem; font-weight: 700; color: var(--text-muted);">发言人：</span>
+                            <select class="author-select" onchange="updateModalCommentField(${cIdx}, 'author', this.value)">
+                                <option value="">选择您的名字</option>
+                                ${AUTHORS.map(name => `<option value="${name}" ${comm.author === name ? 'selected' : ''}>${name}</option>`).join('')}
+                            </select>
+                            <span style="font-size: 0.7rem; color: var(--text-muted);">⏱️ ${comm.timestamp || ''}</span>
+                        </div>
+                        <button class="detail-btn" onclick="deleteModalComment(${cIdx})" style="padding:2px 6px; font-size:0.7rem; background:#fff5f5; color:#e53e3e; border-color:#fed7d7; width:auto;">×</button>
+                    </div>
+                    <textarea oninput="updateModalCommentField(${cIdx}, 'text', this.value)" placeholder="写下您的感想、评价或备忘录...">${comm.text || ''}</textarea>
+                    <div class="comment-footer">
+                        <div class="reaction-bar">
+                            ${reactionLabels.map((label, rIdx) => `
+                                <button class="reaction-btn ${comm.reactions?.[rIdx]?.active ? 'active' : ''}" onclick="toggleModalReaction(${cIdx},${rIdx})">
+                                    ${label} <span class="count">${comm.reactions?.[rIdx]?.count || 0}</span>
+                                </button>
+                            `).join('')}
+                        </div>
+                        <div style="font-size: 0.7rem; color: var(--text-muted);">署名: <b>${comm.author || '未署名'}</b></div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function handleModalImageUpload(input) {
+            processImage(input, (base64) => {
+                const sub = milestonesDataCache[currentEditingMIdx].subMilestones[currentEditingSIdx];
+                if (!sub.images) sub.images = [];
+                sub.images.push(base64);
+                renderModalContent();
+            });
+        }
+
+        function deleteModalImage(imgIdx) {
+            const sub = milestonesDataCache[currentEditingMIdx].subMilestones[currentEditingSIdx];
+            sub.images.splice(imgIdx, 1);
+            renderModalContent();
+        }
+
+        function addModalComment() {
+            const sub = milestonesDataCache[currentEditingMIdx].subMilestones[currentEditingSIdx];
+            if (!sub.comments) sub.comments = [];
+            sub.comments.push({
+                author: "", timestamp: getCurrentDateTime(), text: "",
+                reactions: Array(4).fill().map(() => ({ count: 0, active: false }))
+            });
+            renderModalContent();
+        }
+
+        function deleteModalComment(cIdx) {
+            const sub = milestonesDataCache[currentEditingMIdx].subMilestones[currentEditingSIdx];
+            sub.comments.splice(cIdx, 1);
+            renderModalContent();
+        }
+
+        function updateModalCommentField(cIdx, field, val) {
+            const sub = milestonesDataCache[currentEditingMIdx].subMilestones[currentEditingSIdx];
+            if (sub?.comments?.[cIdx]) {
+                sub.comments[cIdx][field] = val;
+            }
+        }
+
+        function toggleModalReaction(cIdx, rIdx) {
+            const sub = milestonesDataCache[currentEditingMIdx].subMilestones[currentEditingSIdx];
+            const rec = sub.comments[cIdx].reactions[rIdx];
+            rec.active = !rec.active;
+            rec.count = rec.active ? rec.count + 1 : Math.max(0, rec.count - 1);
+            renderModalContent();
+        }
+
+        function processImage(input, callback) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const img = new Image();
+                    img.src = e.target.result;
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        let w = img.width, h = img.height, max = 600;
+                        if (w > h && w > max) { h *= max / w; w = max; }
+                        else if (h > max) { w *= max / h; h = max; }
+                        canvas.width = w; canvas.height = h;
+                        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+                        callback(canvas.toDataURL('image/jpeg', 0.7));
+                    };
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        async function saveToCloud() {
+            try {
+                const res = await fetch(`${SUPABASE_URL}/rest/v1/trip_posts`, {
+                    method: "POST",
+                    headers: {
+                        "apikey": SUPABASE_ANON_KEY,
+                        "Authorization": `Bearer ${SUPABASE_ANON_KEY}`,
+                        "Content-Type": "application/json",
+                        "Prefer": "resolution=merge-duplicates"
+                    },
+                    body: JSON.stringify({ person_id: "sichuan_memoir_sketch_style", content_data: { milestones: milestonesDataCache } })
+                });
+
+                if (res.ok) {
+                    const tip = document.getElementById('global-save-tip');
+                    if(tip) {
+                        tip.style.opacity = '1';
+                        setTimeout(() => { tip.style.opacity = '0'; }, 2500);
+                    }
+                } else {
+                    alert("保存失败，请检查网络或控制台。");
+                }
+            } catch (err) {
+                console.error("保存异常", err);
+                alert("保存发生异常。");
+            }
+        }
     </script>
 </body>
 </html>
