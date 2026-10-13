@@ -254,20 +254,15 @@
             cursor: pointer; width: 100%; margin-top: 10px; text-align: center;
         }
 
-        .save-tip { font-size: 0.85rem; color: #38a169; font-weight: bold; opacity: 0; transition: opacity 0.3s; margin-left: 8px; display: inline-block; }
-        
-        /* 未保存状态下的提醒闪烁横幅 */
+        /* 未保存时的醒目提醒条（固定在足迹面板正上方） */
         #unsaved-banner {
-            position: fixed; top: 0; left: 0; width: 100%; background: #e53e3e; color: white;
-            text-align: center; padding: 8px; font-size: 0.85rem; font-weight: bold; z-index: 9998;
-            display: none; box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            background: #fff5f5; border: 2px dashed #e53e3e; color: #c53030;
+            text-align: center; padding: 10px; border-radius: 12px; font-size: 0.9rem; font-weight: bold;
+            margin-bottom: 15px; display: none; box-shadow: 0 4px 12px rgba(229,62,62,0.1);
         }
     </style>
 </head>
 <body>
-
-    <!-- 未保存提醒横幅 -->
-    <div id="unsaved-banner">⚠️ 您有修改的内容尚未保存到云端，请记得点击“保存修改”按钮！</div>
 
     <div id="auth-overlay">
         <div class="auth-box">
@@ -385,14 +380,17 @@
             </div>
 
             <div class="panel-box">
+                <!-- 未保存修改提醒条，紧贴在足迹面板头部 -->
+                <div id="unsaved-banner">⚠️ 您有新添加或修改的内容尚未保存，请点击右上方“保存修改”！</div>
+
                 <div class="panel-header-row">
                     <div>
                         <h2 style="font-size: 1.25rem; font-weight: 800; color: var(--text-main);">🌊 足迹</h2>
                         <p style="color: var(--text-muted); font-size: 0.8rem; margin-top: 2px;">左右滑动查看各大站，点击小卡片展开留言</p>
                     </div>
-                    <div style="display: flex; align-items: center; flex-wrap: wrap;">
-                        <button id="main-save-btn" class="primary-btn" style="font-size: 0.9rem; padding: 10px 16px;">💾 保存修改</button>
-                        <span id="global-save-tip" class="save-tip">✓ 云端已同步！</span>
+                    <div>
+                        <!-- 按钮文字会动态变为 “💾 保存修改” 或 “✓ 已同步” -->
+                        <button id="main-save-btn" class="primary-btn" style="font-size: 0.9rem; padding: 10px 18px;">💾 保存修改</button>
                     </div>
                 </div>
 
@@ -445,7 +443,7 @@
         let currentEditingMIdx = null;
         let currentEditingSIdx = null;
         let draggedSubItem = null;
-        let hasUnsavedChanges = false; // 用于标记是否有未保存的改动
+        let hasUnsavedChanges = false;
 
         function checkPassword() {
             if (document.getElementById("password-input").value === CORRECT_PASSWORD) {
@@ -470,11 +468,10 @@
             }
         });
 
-        // 核心：当用户尝试关闭、刷新或离开页面时，如果有未保存的改动，浏览器会进行拦截提醒
         window.addEventListener('beforeunload', (e) => {
             if (hasUnsavedChanges) {
                 e.preventDefault();
-                e.returnValue = ''; // 标准写法，用于触发浏览器默认拦截弹窗
+                e.returnValue = '';
             }
         });
 
@@ -482,12 +479,20 @@
             hasUnsavedChanges = true;
             const banner = document.getElementById('unsaved-banner');
             if (banner) banner.style.display = 'block';
+            const btn = document.getElementById('main-save-btn');
+            if (btn) btn.style.background = 'linear-gradient(135deg, #e53e3e 0%, #c53030 100%)'; // 按钮变红提醒
         }
 
         function clearUnsaved() {
             hasUnsavedChanges = false;
             const banner = document.getElementById('unsaved-banner');
             if (banner) banner.style.display = 'none';
+            const btn = document.getElementById('main-save-btn');
+            if (btn) {
+                btn.style.background = 'linear-gradient(135deg, #2e7d32 0%, #4caf50 100%)';
+                btn.innerText = '✓ 已同步';
+                setTimeout(() => { btn.innerText = '💾 保存修改'; }, 3000);
+            }
         }
 
         function switchView(viewId) {
@@ -533,7 +538,7 @@
                     milestonesDataCache = JSON.parse(JSON.stringify(defaultMilestones));
                     globalCommentsCache = [];
                 }
-                clearUnsaved(); // 加载完后重置未保存状态
+                clearUnsaved();
                 renderSketchTimeline();
                 renderGlobalComments();
             } catch (err) { 
@@ -575,7 +580,7 @@
                 text: "",
                 bgColor: "#ffffff"
             });
-            markUnsaved(); // 标记有未保存改动
+            markUnsaved();
             renderGlobalComments();
             openGlobalCommentModal(globalCommentsCache.length - 1);
         }
@@ -610,10 +615,10 @@
             const selectedBg = document.querySelector('input[name="gc-bg-color"]:checked');
             if (selectedBg) item.bgColor = selectedBg.value;
             
-            markUnsaved(); // 标记有未保存改动
+            markUnsaved();
             closeGlobalCommentModal();
             renderGlobalComments();
-            saveToCloud(); // 自动触发保存
+            saveToCloud();
         }
 
         function deleteGlobalComment() {
@@ -638,9 +643,9 @@
                 milestonesDataCache[mIdx].subMilestones = [];
             }
             milestonesDataCache[mIdx].subMilestones.push({ date: timeVal, place: placeVal, comments: [] });
-            markUnsaved(); // 标记有未保存改动
+            markUnsaved();
             renderSketchTimeline();
-            saveToCloud(); // 自动保存
+            saveToCloud();
         }
 
         function editSubMilestone(mIdx, sIdx, event) {
@@ -846,12 +851,7 @@
                 });
 
                 if (res.ok) {
-                    clearUnsaved(); // 保存成功后解除未保存状态并隐藏提示横幅
-                    const tip = document.getElementById('global-save-tip');
-                    if(tip) {
-                        tip.style.opacity = '1';
-                        setTimeout(() => { tip.style.opacity = '0'; }, 2500);
-                    }
+                    clearUnsaved();
                 } else {
                     const errText = await res.text();
                     console.error("保存失败详情:", errText);
