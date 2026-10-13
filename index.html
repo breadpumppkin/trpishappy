@@ -319,8 +319,8 @@
                 <div style="font-size: 0.8rem; color: var(--text-muted);" id="gc-timestamp-display"></div>
 
                 <div style="display: flex; gap: 10px; margin-top: 5px;">
-                    <button class="primary-btn" style="flex: 1;" onclick="saveGlobalCommentChanges()">💾 保存修改</button>
-                    <button class="primary-btn" style="flex: 1; background: linear-gradient(135deg, #e53e3e 0%, #c53030 100%);" onclick="deleteGlobalComment()">🗑️ 删除</button>
+                    <button class="primary-btn" style="flex: 1;" onclick="saveToCloud()">💾 保存修改</button>
+                    <button class="primary-btn" style="flex: 1; background: linear-gradient(135deg, #e53e3e 0%, #c53030 100%;" onclick="deleteGlobalComment()">🗑️ 删除</button>
                 </div>
             </div>
         </div>
@@ -382,7 +382,7 @@
                         <p style="color: var(--text-muted); font-size: 0.8rem; margin-top: 2px;">左右滑动查看各大站，点击小卡片展开留言</p>
                     </div>
                     <div>
-                        <button class="primary-btn" style="font-size: 0.9rem; padding: 10px 16px;" onclick="saveToCloud()">💾 保存修改</button>
+                        <button id="main-save-btn" class="primary-btn" style="font-size: 0.9rem; padding: 10px 16px;">💾 保存修改</button>
                     </div>
                 </div>
 
@@ -448,6 +448,16 @@
 
         document.getElementById("password-input").addEventListener("keypress", (e) => {
             if (e.key === 'Enter') checkPassword();
+        });
+
+        // 页面加载完成后，直接通过 JS 绑定保存按钮的点击事件，绝对不会失效
+        window.addEventListener('DOMContentLoaded', () => {
+            const saveBtn = document.getElementById('main-save-btn');
+            if (saveBtn) {
+                saveBtn.addEventListener('click', () => {
+                    saveToCloud();
+                });
+            }
         });
 
         function switchView(viewId) {
@@ -601,11 +611,12 @@
         function editSubMilestone(mIdx, sIdx, event) {
             event.stopPropagation();
             const sub = milestonesDataCache[mIdx].subMilestones[sIdx];
-            const input = prompt("修改【时间】与【地点】\n格式：时间, 地点", `${sub.date || ''}, ${sub.place || ''}`);
+            const cleanExistingPlace = (sub.place || '').replace('地点名称', '').trim();
+            const input = prompt("修改【时间】与【地点】\n格式：时间, 地点", `${sub.date || ''}, ${cleanExistingPlace}`);
             if (input === null) return;
             const parts = input.split(/[,，]/);
             if (parts[0] !== undefined) sub.date = parts[0].trim();
-            if (parts[1] !== undefined) sub.place = parts[1].trim();
+            if (parts[1] !== undefined) sub.place = parts[1].trim().replace('地点名称', '').trim();
             renderSketchTimeline();
             saveToCloud();
         }
@@ -803,10 +814,10 @@
                 } else {
                     const errText = await res.text();
                     console.error("保存失败详情:", errText);
-                    alert("保存失败，请检查控制台错误信息。");
+                    alert("保存失败: " + errText);
                 }
             } catch (err) {
-                console.error("保存异常", err);
+                console.error("保存发生异常:", err);
                 alert("保存发生异常。");
             }
         }
